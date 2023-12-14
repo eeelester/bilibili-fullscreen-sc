@@ -18,7 +18,8 @@ module.exports = antfu(
       tsconfigPath: './tsconfig.json'
     },
     ignores: [
-      '*.config.js'
+      '*.config.js',
+      'test/**'
     ]
   },
   {

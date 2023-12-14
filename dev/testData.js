@@ -1,4 +1,4 @@
-export default {
+export const testData = {
   cmd: 'SUPER_CHAT_MESSAGE',
   data: {
     background_bottom_color: '#2A60B2',

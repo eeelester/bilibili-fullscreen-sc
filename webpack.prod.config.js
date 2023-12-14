@@ -15,6 +15,9 @@ module.exports = merge(baseConfig, {
     popup: './src/popup',
     background: './src/background'
   },
+  output: {
+    clean: true
+  },
   module: {
     rules: [
       {

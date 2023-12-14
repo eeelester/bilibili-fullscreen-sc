@@ -41,7 +41,12 @@ void (async function () {
     void chrome.tabs.sendMessage(tab.id as number, {
       switchState,
     })
+
+    // 存着，不然下次点击popup就没有了
     void chrome.storage.session.set({ switchState })
+
+    // 发送给background，这个开关是用户操作，级别最高，background的根据url切换图标状态要在这之下
+    void chrome.runtime.sendMessage({ switchState })
 
     changeIcon(switchState)
   }

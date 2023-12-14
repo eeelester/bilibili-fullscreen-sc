@@ -4,8 +4,9 @@ import type { Root } from 'react-dom/client'
 import { createRoot } from 'react-dom/client'
 import { LiveWS } from 'bilibili-live-ws'
 import SCList from '../components/ScList'
-import { eventBus } from '@/utils/event'
-import { MATCH_URL, WS_SC_EVENT } from '@/constant'
+import { processData } from '@/utils'
+import type { DanmuDataProps } from '@/utils'
+import { MATCH_URL } from '@/constant'
 
 ((document, chrome) => {
   let existElement: HTMLElement | null
@@ -67,58 +68,7 @@ import { MATCH_URL, WS_SC_EVENT } from '@/constant'
     })
     liveWS.on('SUPER_CHAT_MESSAGE', (res) => {
       console.log('SC', res)
-      processData(res)
-    })
-  }
-
-  function processData(res) {
-    // eslint-disable-next-line ts/no-unsafe-assignment
-    const {
-      data: {
-        user_info: {
-          face,
-          face_frame,
-          uname,
-          name_color,
-        },
-        price,
-        message,
-        message_font_color,
-        background_bottom_color,
-        background_color,
-        time,
-        id,
-      },
-    }: {
-      data: {
-        user_info: {
-          face: ''
-          face_frame: ''
-          uname: ''
-          name_color: ''
-        }
-        price: 0
-        message: ''
-        message_font_color: ''
-        background_bottom_color: ''
-        background_color: ''
-        time: 0
-        id: 0
-      }
-    } = res
-
-    eventBus.emit(WS_SC_EVENT, {
-      face,
-      face_frame,
-      uname,
-      name_color,
-      price,
-      message,
-      message_font_color,
-      background_bottom_color,
-      background_color,
-      time,
-      id,
+      processData(res as DanmuDataProps)
     })
   }
 
