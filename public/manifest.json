@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "B站SC提醒",
+  "name": "B站SC助手",
   "version": "0.1.0",
   "description": "在B站看直播全屏时展示SC",
   "action": {
