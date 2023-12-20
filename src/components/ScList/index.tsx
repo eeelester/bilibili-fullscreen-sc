@@ -3,6 +3,7 @@ import {
   CSSTransition,
   TransitionGroup,
 } from 'react-transition-group'
+import { useMove } from './hook'
 import { eventBus } from '@/utils/event'
 import { WS_SC_EVENT } from '@/constant'
 import './index.less'
@@ -24,6 +25,8 @@ interface ScInfo {
 
 function SCList() {
   const [scList, setScList] = useState<ScInfo[]>([])
+  const scListRef = useRef<HTMLDivElement>(null)
+  const { left, bottom, maxHeight } = useMove(scListRef)
   const timeoutMap = useRef(new Map<number, NodeJS.Timeout>())
 
   const Listener = useCallback((scInfo: ScInfo) => {
@@ -56,35 +59,37 @@ function SCList() {
   }, [Listener])
 
   return (
-    <TransitionGroup className="sc-list">
-      {scList.map(({ face, face_frame, uname, name_color, price, message, message_font_color, background_bottom_color, background_color, id, nodeRef, time }) =>
-        (
-          <CSSTransition classNames="sc" key={id} timeout={500} nodeRef={nodeRef}>
-            <div ref={nodeRef as React.RefObject<HTMLDivElement>}>
-              <div className="sc">
-                <div className="top-container" style={{ backgroundColor: background_color, borderColor: background_bottom_color }} ref={nodeRef as React.RefObject<HTMLDivElement>}>
-                  <div className="avatar-container">
-                    <div className="avatar" style={{ backgroundImage: `url(${face})` }} />
-                    <div className="avatar frame" style={{ backgroundImage: `url(${face_frame})` }} />
+    <div className="container" ref={scListRef}>
+      <TransitionGroup className="sc-list" style={{ left: `${left}px`, bottom: `${bottom}px`, maxHeight: `${maxHeight}px` }}>
+        {scList.map(({ face, face_frame, uname, name_color, price, message, message_font_color, background_bottom_color, background_color, id, nodeRef, time }) =>
+          (
+            <CSSTransition classNames="sc" key={id} timeout={500} nodeRef={nodeRef}>
+              <div ref={nodeRef as React.RefObject<HTMLDivElement>}>
+                <div className="sc">
+                  <div className="top-container" style={{ backgroundColor: background_color, borderColor: background_bottom_color }} ref={nodeRef as React.RefObject<HTMLDivElement>}>
+                    <div className="avatar-container">
+                      <div className="avatar" style={{ backgroundImage: `url(${face})` }} />
+                      <div className="avatar frame" style={{ backgroundImage: `url(${face_frame})` }} />
+                    </div>
+                    <div className="top-right-container">
+                      <span className="name" style={{ color: name_color }}>{uname}</span>
+                      <span className="price">
+                        {price}
+                        元
+                      </span>
+                    </div>
                   </div>
-                  <div className="top-right-container">
-                    <span className="name" style={{ color: name_color }}>{uname}</span>
-                    <span className="price">
-                      {price}
-                      元
-                    </span>
-                  </div>
+                  <div className="content" style={{ color: message_font_color, backgroundColor: background_bottom_color }}>{message}</div>
                 </div>
-                <div className="content" style={{ color: message_font_color, backgroundColor: background_bottom_color }}>{message}</div>
+                <div className="progress-inner">
+                  <div className="progress-bg" style={{ backgroundColor: background_bottom_color, animationDuration: `${time}s` }}></div>
+                </div>
               </div>
-              <div className="progress-inner">
-                <div className="progress-bg" style={{ backgroundColor: background_bottom_color, animationDuration: `${time}s` }}></div>
-              </div>
-            </div>
-          </CSSTransition>
-        ),
-      )}
-    </TransitionGroup>
+            </CSSTransition>
+          ),
+        )}
+      </TransitionGroup>
+    </div>
   )
 }
 

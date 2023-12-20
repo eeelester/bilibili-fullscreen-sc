@@ -1,10 +1,8 @@
 import { useEffect, useRef } from 'react'
-import { POPUP_INITIAL_STATE } from '@/constant'
 
-function usePrevious(data) {
-  const ref = useRef(POPUP_INITIAL_STATE)
+function usePrevious(data: boolean) {
+  const ref = useRef(data)
   useEffect(() => {
-    // eslint-disable-next-line ts/no-unsafe-assignment
     ref.current = data
   }, [data])
   return ref.current

@@ -70,6 +70,8 @@ import { MATCH_URL } from '@/constant'
       console.log('SC', res)
       processData(res as DanmuDataProps)
     })
+
+    // processData(testData as DanmuDataProps)
   }
 
   // 监听popup信息

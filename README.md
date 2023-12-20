@@ -4,9 +4,9 @@
 
 ### Chrome 应用商店
 
-打开Chrome浏览器，输入
+打开Chrome浏览器
 
-- https://chromewebstore.google.com/ ，搜索：B 站 SC 助手
+- 输入 https://chromewebstore.google.com/ ，搜索：B 站 SC 助手
 - 添加到 Chrome 即可
 
 ---

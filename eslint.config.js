@@ -23,7 +23,7 @@ module.exports = antfu(
     ]
   },
   {
-    files: ['**/*.tsx'],
+    files: ['**/*.tsx', '**/*.ts'],
     rules: {
       "react-hooks/exhaustive-deps": "warn"
     },

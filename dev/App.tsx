@@ -12,15 +12,15 @@ export default function App() {
     let count = 0
     let timeout: NodeJS.Timeout
     const timeoutCallback = () => {
-      processData({ ...testData, ...{ data: { ...testData.data, id: Math.floor(Math.random() * 10000), time: [10, 2, 3, 5, 4, 3, 7, 8, 9, 1, 2][count], message: String(count) } } })
+      processData({ ...testData, ...{ data: { ...testData.data, id: Math.floor(Math.random() * 10000), time: [60, 60, 30, 60, 200, 30, 60, 30, 60, 200, 60, 60, 30, 60, 200, 30, 60, 30, 60, 200][count], message: String(count) } } })
       // processData({ ...testData, ...{ data: { ...testData.data, id: Math.floor(Math.random() * 10000) } } })
       count++
-      if (count > 10)
+      if (count > 20)
         clearTimeout(timeout)
       else
-        setTimeout(timeoutCallback, 1000)
+        setTimeout(timeoutCallback, 100)
     }
-    timeout = setTimeout(timeoutCallback, 1000)
+    timeout = setTimeout(timeoutCallback, 100)
 
     processData({ ...testData, ...{ data: { ...testData.data, id: Math.floor(Math.random() * 10000) } } })
 
