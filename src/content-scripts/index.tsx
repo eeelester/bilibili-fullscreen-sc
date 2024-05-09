@@ -63,15 +63,21 @@ import { MATCH_URL } from '@/constant'
         return room_id
       })
 
+    const key = await fetch(`https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=${roomId}`)
+      .then(response => response.json())
+      .then((res) => {
+        const { data: { token } = { token: '' } } = res as { data: { token: string } }
+        return token
+      })
+    console.log('key', key)
     liveWS = new LiveWS(roomId, {
       protover: 3,
+      key,
     })
     liveWS.on('SUPER_CHAT_MESSAGE', (res) => {
       console.log('SC', res)
       processData(res as DanmuDataProps)
     })
-
-    // processData(testData as DanmuDataProps)
   }
 
   // 监听popup信息
