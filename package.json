@@ -24,7 +24,8 @@
     "dev:extension": "pnpm run build && tsx dev/extension.ts",
     "lint": "eslint  src/** --fix",
     "test": "jest",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "release": "release-it"
   },
   "dependencies": {
     "@types/rc-switch": "^1.9.5",
@@ -38,6 +39,7 @@
     "@antfu/eslint-config": "^2.3.3",
     "@eslint/eslintrc": "^2.1.4",
     "@jest/globals": "^29.7.0",
+    "@release-it/conventional-changelog": "^8.0.1",
     "@testing-library/jest-dom": "5.16.4",
     "@types/chrome": "^0.0.254",
     "@types/eslint__eslintrc": "^2.1.1",
@@ -61,6 +63,7 @@
     "lint-staged": "^15.2.0",
     "mini-css-extract-plugin": "^2.7.6",
     "puppeteer": "^21.6.0",
+    "release-it": "^17.2.1",
     "style-loader": "^3.3.3",
     "terser-webpack-plugin": "^5.3.9",
     "ts-jest": "^29.1.1",
