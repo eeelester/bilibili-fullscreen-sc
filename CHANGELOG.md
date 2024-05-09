@@ -1,5 +1,12 @@
 
 
+## [0.4.1](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.4.0...0.4.1) (2024-05-09)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* 修改版本号 ([7c4169c](https://github.com/eeelester/bilibili-fullscreen-sc/commit/7c4169cfa027f654ef02a19d7008fe814543f2d7))
+
 ## 0.4.0 (2024-05-09)
 
 
