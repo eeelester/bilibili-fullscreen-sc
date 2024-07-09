@@ -25,8 +25,8 @@ interface ScInfo {
 
 function SCList() {
   const [scList, setScList] = useState<ScInfo[]>([])
-  const scListRef = useRef<HTMLDivElement>(null)
-  const { left, bottom, maxHeight } = useMove(scListRef)
+  const scListRef = useRef<HTMLDialogElement>(null)
+  const { left, top, maxHeight } = useMove(scListRef)
   const timeoutMap = useRef(new Map<number, NodeJS.Timeout>())
 
   const Listener = useCallback((scInfo: ScInfo) => {
@@ -58,9 +58,24 @@ function SCList() {
     }
   }, [Listener])
 
+  useEffect(() => {
+    if (typeof scListRef.current?.showModal === 'function')
+      scListRef.current.showModal()
+    else
+    // eslint-disable-next-line no-alert
+      alert('谷歌浏览器版本过低，请更新！')
+  }, [])
+
   return (
-    <div className="container" ref={scListRef}>
-      <TransitionGroup className="sc-list" style={{ left: `${left}px`, bottom: `${bottom}px`, maxHeight: `${maxHeight}px` }}>
+    <dialog
+      ref={scListRef}
+      style={{
+        left: `${left}px`,
+        top: `${top}px`,
+        maxHeight: `${maxHeight}px`,
+      }}
+    >
+      <TransitionGroup className="sc-list">
         {scList.map(({ face, face_frame, uname, name_color, price, message, message_font_color, background_bottom_color, background_color, id, nodeRef, time }) =>
           (
             <CSSTransition classNames="sc" key={id} timeout={500} nodeRef={nodeRef}>
@@ -89,7 +104,7 @@ function SCList() {
           ),
         )}
       </TransitionGroup>
-    </div>
+    </dialog>
   )
 }
 

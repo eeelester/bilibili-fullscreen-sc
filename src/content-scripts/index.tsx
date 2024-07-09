@@ -4,6 +4,8 @@ import type { Root } from 'react-dom/client'
 import { createRoot } from 'react-dom/client'
 import { LiveWS } from 'bilibili-live-ws'
 import SCList from '../components/ScList'
+
+// import { testData } from '../../dev/testData'
 import { processData } from '@/utils'
 import type { DanmuDataProps } from '@/utils'
 import { MATCH_URL } from '@/constant'
@@ -13,6 +15,19 @@ import { MATCH_URL } from '@/constant'
   let root: Root | null
   let liveWS: LiveWS | null
   let switchState: boolean = true
+
+  /**
+   * 监听全屏模式事件
+   */
+  // window.addEventListener('resize',() => {
+  //   // 获取滚动条宽度
+  //   const cWidth = document.body.clientWidth || document.documentElement.clientWidth; //页面可视区域宽度
+  //   const iWidth = window.innerWidth;// 页面宽度（与浏览器宽度window.outerwidth不同的是，window.outerwidth包含控制台等）
+  //   const srollbarWidth = iWidth - cWidth
+  //   if(window.outerWidth - window.innerWidth)
+  //   console.log(iWidth - cWidth);//打印滚动条宽度
+  // })
+
   /**
    * 监听fullscreenchange事件
    */
@@ -44,10 +59,16 @@ import { MATCH_URL } from '@/constant'
       console.log('------进入全屏，bilibili-fullscreen-sc启动------')
 
       existElement = document.createElement('div')
-      document.querySelector('#live-player')?.appendChild(existElement)
+      // [].filter.call(document.querySelectorAll('iframe'),item=>item.contentDocument)[0].contentDocument.
+      // document.querySelector('#live-player')?.appendChild(existElement)
+      document.documentElement.appendChild(existElement)
 
       root = createRoot(existElement)
       root.render(<SCList />)
+
+      // setTimeout(() => {
+      //   processData(testData as DanmuDataProps)
+      // }, 5000)
 
       void getInfo()
     },

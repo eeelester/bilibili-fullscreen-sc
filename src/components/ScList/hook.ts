@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
-type propRef = React.MutableRefObject<HTMLDivElement | undefined | null>
+type propRef = React.MutableRefObject<HTMLDialogElement | undefined | null>
 
 function useMove(ref: propRef) {
   const height = useMemo(() => document.documentElement.clientHeight, [])
-  const [position, setPosition] = useState({ left: 10, bottom: 30, maxHeight: height - 30 })
+  const [position, setPosition] = useState({ left: 10, top: 300, maxHeight: height - 30 })
   const movingRef = useRef(false)
   const lastPositionRef = useRef<{ lastX: number | null, lastY: number | null }>({ lastX: 0, lastY: 0 })
 
@@ -17,8 +17,8 @@ function useMove(ref: propRef) {
       const dy = e.clientY - lastY
       setPosition(prev => ({
         left: prev.left + dx,
-        bottom: prev.bottom - dy,
-        maxHeight: height - (prev.bottom + dy),
+        top: prev.top + dy,
+        maxHeight: height - prev.top + dy,
       }))
     }
     lastPositionRef.current = {

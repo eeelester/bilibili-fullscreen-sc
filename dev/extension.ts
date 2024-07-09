@@ -4,7 +4,7 @@ import { launch } from 'puppeteer'
 async function start() {
   const extensionPath = resolve(__dirname, '../dist') // 插件路径
   const browser = await launch({
-    defaultViewport: { width: 1600, height: 800 },
+    defaultViewport: { width: 1920, height: 1080 },
     headless: false, // 需要配置有头模式，无头模式找不到 service worker
     args: [
       // 除了 extensionPath 的插件都禁用掉，避免测试被影响
