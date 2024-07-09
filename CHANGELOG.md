@@ -1,5 +1,12 @@
 
 
+## [0.4.2](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.4.1...0.4.2) (2024-07-09)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* 修复无法正确显示sc列表的问题 ([76d68d9](https://github.com/eeelester/bilibili-fullscreen-sc/commit/76d68d984392c9c449bcebbd82a1901a9c780e4b))
+
 ## [0.4.1](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.4.0...0.4.1) (2024-05-09)
 
 
