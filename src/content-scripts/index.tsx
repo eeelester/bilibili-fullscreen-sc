@@ -4,6 +4,8 @@ import type { Root } from 'react-dom/client'
 import { createRoot } from 'react-dom/client'
 import { LiveWS } from 'bilibili-live-ws'
 import SCList from '../components/ScList'
+
+// import { testData } from '../../dev/testData'
 import { processData } from '@/utils'
 import type { DanmuDataProps } from '@/utils'
 import { MATCH_URL } from '@/constant'
@@ -13,9 +15,6 @@ import { MATCH_URL } from '@/constant'
   let root: Root | null
   let liveWS: LiveWS | null
   let switchState: boolean = true
-  /**
-   * 监听fullscreenchange事件
-   */
   document.addEventListener(
     'fullscreenchange',
     () => {
@@ -28,13 +27,10 @@ import { MATCH_URL } from '@/constant'
 
       // 从全屏变为非全屏
       if (!document.fullscreenElement && existElement) {
-        // react卸载
         root?.unmount()
         root = null
-        // 移除dom
         existElement?.parentNode?.removeChild(existElement)
         existElement = null
-        // 关闭websocket
         liveWS?.close()
         liveWS = null
         console.log('------全屏退出，清除完毕------')
@@ -44,10 +40,17 @@ import { MATCH_URL } from '@/constant'
       console.log('------进入全屏，bilibili-fullscreen-sc启动------')
 
       existElement = document.createElement('div')
-      document.querySelector('#live-player')?.appendChild(existElement)
+      // 获取跟video的父级dom（B站video的父级dom结构老是变，有病的！）
+      // const iframe = Array.from(document.getElementsByTagName('iframe')).filter(item => item.allowFullscreen)[0]
+      // const videoParent = iframe?.contentDocument?.querySelector('.live-player-mounter')
+      const videoParent2 = document.querySelector('.live-player-mounter')
+      videoParent2?.appendChild(existElement)
 
       root = createRoot(existElement)
       root.render(<SCList />)
+      // setTimeout(() => {
+      //   processData(testData as DanmuDataProps)
+      // }, 2000)
 
       void getInfo()
     },
