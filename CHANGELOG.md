@@ -1,5 +1,12 @@
 
 
+## [0.4.4](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.4.3...0.4.4) (2024-08-18)
+
+
+### ✨ Features | 新功能
+
+* 修复无法显示问题 ([53f3498](https://github.com/eeelester/bilibili-fullscreen-sc/commit/53f349856855f10d471f8d29d6565f492cf65c31))
+
 ## [0.4.3](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.4.1...0.4.3) (2024-07-10)
 
 
