@@ -1,12 +1,11 @@
 import { createRef, useCallback, useEffect, useRef, useState } from 'react'
 import {
   CSSTransition,
-  TransitionGroup,
 } from 'react-transition-group'
 import { useMove } from './hook'
 import { eventBus } from '@/utils/event'
 import { WS_SC_EVENT } from '@/constant'
-import './index.less'
+import { StyleTransitionGroup,SC,ProgressInner,ScTranstion} from './styles'
 
 interface ScInfo {
   face: string
@@ -59,13 +58,18 @@ function SCList() {
   }, [Listener])
 
   return (
-    <div className="container" ref={scListRef}>
-      <TransitionGroup className="sc-list" style={{ left: `${left}px`, bottom: `${bottom}px`, maxHeight: `${maxHeight}px` }}>
+    <div ref={scListRef}>
+      <StyleTransitionGroup left={left} bottom={bottom} maxheight={maxHeight}>
         {scList.map(({ face, face_frame, uname, name_color, price, message, message_font_color, background_bottom_color, background_color, id, nodeRef, time }) =>
           (
-            <CSSTransition classNames="sc" key={id} timeout={500} nodeRef={nodeRef}>
-              <div ref={nodeRef as React.RefObject<HTMLDivElement>}>
-                <div className="sc">
+            <CSSTransition 
+              key={id} 
+              timeout={500} 
+              nodeRef={nodeRef} 
+              classNames="sc" 
+              unmountOnExit >
+              <ScTranstion ref={nodeRef as React.RefObject<HTMLDivElement>}>
+                <SC>
                   <div className="top-container" style={{ backgroundColor: background_color, borderColor: background_bottom_color }} ref={nodeRef as React.RefObject<HTMLDivElement>}>
                     <div className="avatar-container">
                       <div className="avatar" style={{ backgroundImage: `url(${face})` }} />
@@ -80,15 +84,15 @@ function SCList() {
                     </div>
                   </div>
                   <div className="content" style={{ color: message_font_color, backgroundColor: background_bottom_color }}>{message}</div>
-                </div>
-                <div className="progress-inner">
+                </SC>
+                <ProgressInner>
                   <div className="progress-bg" style={{ backgroundColor: background_bottom_color, animationDuration: `${time}s` }}></div>
-                </div>
-              </div>
+                </ProgressInner>
+              </ScTranstion>
             </CSSTransition>
           ),
         )}
-      </TransitionGroup>
+      </StyleTransitionGroup>
     </div>
   )
 }

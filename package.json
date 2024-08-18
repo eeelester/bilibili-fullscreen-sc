@@ -25,15 +25,15 @@
     "lint": "eslint  src/** --fix",
     "test": "jest",
     "prepare": "husky install",
-    "release": "release-it"
+    "release": "pnpm run build && release-it"
   },
   "dependencies": {
-    "@types/rc-switch": "^1.9.5",
     "bilibili-live-ws": "^6.3.1",
     "rc-switch": "^4.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-transition-group": "^4.4.5"
+    "react-transition-group": "^4.4.5",
+    "styled-components": "^6.1.12"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.3.3",
@@ -45,6 +45,7 @@
     "@types/eslint__eslintrc": "^2.1.1",
     "@types/jest": "^29.5.11",
     "@types/node": "^20.10.4",
+    "@types/rc-switch": "^1.9.5",
     "@types/react": "^18.2.42",
     "@types/react-dom": "^18.2.17",
     "@types/testing-library__jest-dom": "5",

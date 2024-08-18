@@ -17,7 +17,6 @@
     {
       "matches": ["https://live.bilibili.com/*"],
       "js": ["contentScripts.js"],
-      "css": ["contentScripts.css"],
       "run_at": "document_start"
     }
   ],

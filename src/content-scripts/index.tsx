@@ -41,10 +41,11 @@ import { MATCH_URL } from '@/constant'
 
       existElement = document.createElement('div')
       // 获取跟video的父级dom（B站video的父级dom结构老是变，有病的！）
-      // const iframe = Array.from(document.getElementsByTagName('iframe')).filter(item => item.allowFullscreen)[0]
-      // const videoParent = iframe?.contentDocument?.querySelector('.live-player-mounter')
-      const videoParent2 = document.querySelector('.live-player-mounter')
-      videoParent2?.appendChild(existElement)
+      const videoParent = document.querySelector('.live-player-mounter');
+      const iframe = Array.from(document.querySelectorAll('iframe')).filter(item => item.allowFullscreen)[0];
+      const videoParent2 = iframe?.contentDocument?.querySelector('.live-player-mounter');
+      (videoParent || videoParent2)?.appendChild(existElement)
+      console.log('videoParent',videoParent,videoParent2)
 
       root = createRoot(existElement)
       root.render(<SCList />)
@@ -72,7 +73,6 @@ import { MATCH_URL } from '@/constant'
         const { data: { token } = { token: '' } } = res as { data: { token: string } }
         return token
       })
-    console.log('key', key)
     liveWS = new LiveWS(roomId, {
       protover: 3,
       key,
