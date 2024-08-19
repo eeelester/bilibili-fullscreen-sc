@@ -1,5 +1,12 @@
 
 
+## [0.5.0](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.4.4...0.5.0) (2024-08-19)
+
+
+### ✨ Features | 新功能
+
+* 新增监听网页全屏模式 ([a099b95](https://github.com/eeelester/bilibili-fullscreen-sc/commit/a099b9533be4def5759978c9d53409574cd4102f))
+
 ## [0.4.4](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.4.3...0.4.4) (2024-08-18)
 
 
