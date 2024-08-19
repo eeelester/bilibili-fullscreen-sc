@@ -15,48 +15,95 @@ import { MATCH_URL } from '@/constant'
   let root: Root | null
   let liveWS: LiveWS | null
   let switchState: boolean = true
+
+  if (!MATCH_URL.test(location.host))
+    return
+
+  // 判断全屏模式
   document.addEventListener(
     'fullscreenchange',
     () => {
-      if (!MATCH_URL.test(location.host))
-        return
-
       // 当用户在popup关闭此功能后
       if (!switchState)
         return
 
       // 从全屏变为非全屏
       if (!document.fullscreenElement && existElement) {
-        root?.unmount()
-        root = null
-        existElement?.parentNode?.removeChild(existElement)
-        existElement = null
-        liveWS?.close()
-        liveWS = null
+        unmount()
         console.log('------全屏退出，清除完毕------')
         return
       }
 
       console.log('------进入全屏，bilibili-fullscreen-sc启动------')
 
-      existElement = document.createElement('div')
-      // 获取跟video的父级dom（B站video的父级dom结构老是变，有病的！）
-      const videoParent = document.querySelector('.live-player-mounter');
-      const iframe = Array.from(document.querySelectorAll('iframe')).filter(item => item.allowFullscreen)[0];
-      const videoParent2 = iframe?.contentDocument?.querySelector('.live-player-mounter');
-      (videoParent || videoParent2)?.appendChild(existElement)
-      console.log('videoParent',videoParent,videoParent2)
-
-      root = createRoot(existElement)
-      root.render(<SCList />)
-      // setTimeout(() => {
-      //   processData(testData as DanmuDataProps)
-      // }, 2000)
-
-      void getInfo()
+      mount()
     },
     true,
-  )
+  );
+
+  // 判断video出现的时机，用setTimeout主要是方便，mutationobserver监听iframe里的节点麻烦
+  (function loop() {
+    setTimeout(function () {
+      const video = document.querySelector('video') || Array.from(document.querySelectorAll('iframe')).filter(item => item.allowFullscreen)[0]?.contentDocument?.querySelector('video')
+      if(video){
+        listenVideoSizeChange(video)
+      }else{
+        loop();
+      }
+    }, 500);
+  })()
+
+
+
+  function mount() {
+    existElement = document.createElement('div')
+    // 获取跟video的父级dom（B站video的父级dom结构老是变，有病的！）
+    const videoParent = document.querySelector('.live-player-mounter');
+    const iframe = Array.from(document.querySelectorAll('iframe')).filter(item => item.allowFullscreen)[0];
+    const videoParent2 = iframe?.contentDocument?.querySelector('.live-player-mounter');
+    (videoParent || videoParent2)?.appendChild(existElement)
+    console.log('videoParent', videoParent, videoParent2)
+    root = createRoot(existElement)
+    root.render(<SCList />)
+    // setTimeout(() => {
+    //   processData(testData as DanmuDataProps)
+    // }, 2000)
+
+    void getInfo()
+  }
+
+  function unmount(){
+    root?.unmount()
+    root = null
+    existElement?.parentNode?.removeChild(existElement)
+    existElement = null
+    liveWS?.close()
+    liveWS = null
+  }
+
+  function listenVideoSizeChange(video:HTMLVideoElement){
+    let lastTimePageFullScreen = false
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        console.log('resizeObserver',entry)
+        if (entry.contentRect) {
+          const videoWidth = entry.contentRect?.width
+          if (videoWidth === document.body.clientWidth) {
+            console.log('------进入了网页全屏模式------')
+            lastTimePageFullScreen = true
+            mount()
+          } else if (lastTimePageFullScreen) {
+            console.log('------退出了网页全屏模式------')
+            lastTimePageFullScreen = false
+            // 执行卸载操作
+            unmount()
+          }
+        }
+      }
+    });
+
+    resizeObserver.observe(video);
+  }
 
   async function getInfo() {
     const shortId = location.pathname.slice(1)
