@@ -1,5 +1,12 @@
 
 
+## [0.5.1](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.5.0...0.5.1) (2024-08-19)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* 窗口resize时会重复mount的bug ([88e9f3e](https://github.com/eeelester/bilibili-fullscreen-sc/commit/88e9f3e5f581b26c6dc12d8ca91b457834d17ce7))
+
 ## [0.5.0](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.4.4...0.5.0) (2024-08-19)
 
 
