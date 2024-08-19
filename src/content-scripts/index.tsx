@@ -89,9 +89,12 @@ import { MATCH_URL } from '@/constant'
         if (entry.contentRect) {
           const videoWidth = entry.contentRect?.width
           if (videoWidth === document.body.clientWidth) {
-            console.log('------进入了网页全屏模式------')
-            lastTimePageFullScreen = true
-            mount()
+            // 虽然宽度相同，但是有可能窗口resize也会进来，所以为了防止重复mount
+            if(!lastTimePageFullScreen){
+              console.log('------进入了网页全屏模式------')
+              lastTimePageFullScreen = true
+              mount()
+            }
           } else if (lastTimePageFullScreen) {
             console.log('------退出了网页全屏模式------')
             lastTimePageFullScreen = false
