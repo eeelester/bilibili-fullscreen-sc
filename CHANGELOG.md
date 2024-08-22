@@ -1,5 +1,12 @@
 
 
+## [0.5.2](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.5.1...0.5.2) (2024-08-22)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* 修复窗口大小变化导致网页全屏模式没有监听到的问题 ([43b0afe](https://github.com/eeelester/bilibili-fullscreen-sc/commit/43b0afe7f22d869cd22f86392d21c1361aa3d87d))
+
 ## [0.5.1](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.5.0...0.5.1) (2024-08-19)
 
 
