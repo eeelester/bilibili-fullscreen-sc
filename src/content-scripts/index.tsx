@@ -88,7 +88,7 @@ import { MATCH_URL } from '@/constant'
         console.log('resizeObserver',entry)
         if (entry.contentRect) {
           const videoWidth = entry.contentRect?.width
-          if (videoWidth === document.body.clientWidth) {
+          if (videoWidth === window.innerWidth) {
             // 虽然宽度相同，但是有可能窗口resize也会进来，所以为了防止重复mount
             if(!lastTimePageFullScreen){
               console.log('------进入了网页全屏模式------')
