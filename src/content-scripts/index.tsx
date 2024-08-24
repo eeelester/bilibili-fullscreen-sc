@@ -123,6 +123,7 @@ import { MATCH_URL } from '@/constant'
         const { data: { token } = { token: '' } } = res as { data: { token: string } }
         return token
       })
+    console.log('key', key)
     liveWS = new LiveWS(roomId, {
       protover: 3,
       key,
