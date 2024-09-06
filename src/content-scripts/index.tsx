@@ -95,9 +95,10 @@ import { MATCH_URL } from '@/constant'
               lastTimePageFullScreen = true
               mount()
             }
-          } else if (lastTimePageFullScreen) {
+          } else if (lastTimePageFullScreen && videoWidth) {
             console.log('------退出了网页全屏模式------')
             lastTimePageFullScreen = false
+            resizeObserver.disconnect()
             // 执行卸载操作
             unmount()
           }
