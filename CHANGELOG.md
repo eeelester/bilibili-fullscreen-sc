@@ -1,5 +1,17 @@
 
 
+## [0.5.3](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.5.2...0.5.3) (2024-09-06)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* 全屏模式偶然会退出监听 ([ebfb6bd](https://github.com/eeelester/bilibili-fullscreen-sc/commit/ebfb6bd9771c6f286a917e2d127f56a2aa269a8e))
+
+
+### ⏪ Reverts | 回退
+
+* Revert "feat: 修复无法显示问题" ([fdc54ac](https://github.com/eeelester/bilibili-fullscreen-sc/commit/fdc54acce2867725599edebaf252ee7cb95e275f))
+
 ## [0.5.2](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.5.1...0.5.2) (2024-08-22)
 
 
