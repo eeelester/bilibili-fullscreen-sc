@@ -1,5 +1,12 @@
 
 
+## [0.5.4](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.5.3...0.5.4) (2024-09-08)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* 无法重复进入网页全屏模式 ([8975956](https://github.com/eeelester/bilibili-fullscreen-sc/commit/8975956e2f38aa66fdf621c2ef668f29dcb3a6fe))
+
 ## [0.5.3](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.5.2...0.5.3) (2024-09-06)
 
 
