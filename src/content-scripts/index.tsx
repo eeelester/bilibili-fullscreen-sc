@@ -15,6 +15,7 @@ import { MATCH_URL } from '@/constant'
   let root: Root | null
   let liveWS: LiveWS | null
   let switchState: boolean = true
+  let isMount = false
 
   if (!MATCH_URL.test(location.host))
     return
@@ -29,14 +30,11 @@ import { MATCH_URL } from '@/constant'
 
       // 从全屏变为非全屏
       if (!document.fullscreenElement && existElement) {
-        unmount()
-        console.log('------全屏退出，清除完毕------')
+        unmount('------全屏退出，清除完毕------')
         return
       }
 
-      console.log('------进入全屏，bilibili-fullscreen-sc启动------')
-
-      mount()
+      mount('------进入全屏，bilibili-fullscreen-sc启动------')
     },
     true,
   );
@@ -55,7 +53,12 @@ import { MATCH_URL } from '@/constant'
 
 
 
-  function mount() {
+  function mount(log:string) {
+    if(isMount) return 
+    isMount = true
+
+    console.log(log)
+
     existElement = document.createElement('div')
     // 获取跟video的父级dom（B站video的父级dom结构老是变，有病的！）
     const videoParent = document.querySelector('.live-player-mounter');
@@ -72,7 +75,11 @@ import { MATCH_URL } from '@/constant'
     void getInfo()
   }
 
-  function unmount(){
+  function unmount(log:string){
+    if(!isMount) return 
+    isMount = false
+
+    console.log(log)
     root?.unmount()
     root = null
     existElement?.parentNode?.removeChild(existElement)
@@ -91,15 +98,13 @@ import { MATCH_URL } from '@/constant'
           if (videoWidth === window.innerWidth) {
             // 虽然宽度相同，但是有可能窗口resize也会进来，所以为了防止重复mount
             if(!lastTimePageFullScreen){
-              console.log('------进入了网页全屏模式------')
               lastTimePageFullScreen = true
-              mount()
+              mount('------进入了网页全屏模式------')
             }
           } else if (lastTimePageFullScreen && videoWidth) {
-            console.log('------退出了网页全屏模式------')
             lastTimePageFullScreen = false
             // 执行卸载操作
-            unmount()
+            unmount('------退出了网页全屏模式------')
           }
         }
       }
