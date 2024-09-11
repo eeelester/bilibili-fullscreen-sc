@@ -1,5 +1,12 @@
 
 
+## [0.5.5](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.5.4...0.5.5) (2024-09-11)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* 全屏和网页全屏模式同时启动的bug ([da89d2b](https://github.com/eeelester/bilibili-fullscreen-sc/commit/da89d2b9ef4f71dcc6e18000e47f2085095236ab))
+
 ## [0.5.4](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.5.3...0.5.4) (2024-09-08)
 
 
