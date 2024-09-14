@@ -27,8 +27,7 @@
     "lint": "eslint  src/** --fix",
     "test": "jest",
     "prepare": "husky install",
-    "release": "release-it && wxt build",
-    "submit": "wxt submit --dry-run --chrome-zip .output/bilibili-fullscreen-sc-0.5.5-chrome.zip"
+    "release": "release-it"
   },
   "dependencies": {
     "bilibili-live-ws": "^6.3.1",
