@@ -1,5 +1,12 @@
 
 
+## [0.6.0](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.5.5...0.6.0) (2024-09-14)
+
+
+### ♻ Code Refactoring | 代码重构
+
+* 使用wxt重构 ([7ab4ae3](https://github.com/eeelester/bilibili-fullscreen-sc/commit/7ab4ae303a84755f961bf05bb4387edd77bd9fcc))
+
 ## [0.5.5](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.5.4...0.5.5) (2024-09-11)
 
 
