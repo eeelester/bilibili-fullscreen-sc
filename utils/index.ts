@@ -8,7 +8,7 @@ import { WS_SC_EVENT } from '@/constant'
  */
 function changeIcon(switchState: boolean) {
   if (switchState) {
-    void chrome.action.setIcon({
+    browser.action.setIcon({
       path: {
         16: '/icons/icon-able-16.png',
         32: '/icons/icon-able-32.png',
@@ -17,7 +17,7 @@ function changeIcon(switchState: boolean) {
     })
   }
   else {
-    void chrome.action.setIcon({
+    browser.action.setIcon({
       path: {
         16: '/icons/icon-16.png',
         32: '/icons/icon-32.png',
