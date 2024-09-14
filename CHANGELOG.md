@@ -1,5 +1,12 @@
 
 
+## [0.6.1](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.6.0...0.6.1) (2024-09-14)
+
+
+### 🔧 Continuous Integration | CI 配置
+
+* 增加github-action ([7839e79](https://github.com/eeelester/bilibili-fullscreen-sc/commit/7839e79a64a92aed068e5331c89a6d063b2f17fc))
+
 ## [0.6.0](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.5.5...0.6.0) (2024-09-14)
 
 
