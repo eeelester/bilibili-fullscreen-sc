@@ -88,6 +88,9 @@ export default defineContentScript({
         function listenVideoSizeChange(video: HTMLVideoElement) {
             let lastTimePageFullScreen = false
             const resizeObserver = new ResizeObserver((entries) => {
+                // 当用户在popup关闭此功能后
+                if (!switchState)
+                    return
                 for (const entry of entries) {
                     console.log('resizeObserver', entry)
                     if (entry.contentRect) {

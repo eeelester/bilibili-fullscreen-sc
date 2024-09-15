@@ -1,7 +1,11 @@
 name: Deploy
 
-on: workflow_dispatch
-
+on: 
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release'
+        required: true
 jobs:
   submit:
     name: Release && Submit
@@ -31,15 +35,12 @@ jobs:
         run: pnpm install
 
       - name: release
-        run: pnpm release
+        run: pnpm release -i=${{ github.event.inputs.version }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Zip extensions
         run: pnpm zip  
-
-      - name: List files
-        run: ls -R
 
       - name: Submit to stores
         run: |
