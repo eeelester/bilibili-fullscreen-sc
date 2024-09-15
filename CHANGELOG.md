@@ -1,5 +1,12 @@
 
 
+## [0.6.3](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.6.1...0.6.3) (2024-09-15)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* 图标以及标题显示问题 ([1517caf](https://github.com/eeelester/bilibili-fullscreen-sc/commit/1517caf45dda7041a71069b2793f1faec6b65171))
+
 ## [0.6.1](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.6.0...0.6.1) (2024-09-14)
 
 
