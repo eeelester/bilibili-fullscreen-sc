@@ -1,5 +1,12 @@
 
 
+## [0.6.6](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.6.3...0.6.6) (2024-09-15)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* popup显示bug ([54aa006](https://github.com/eeelester/bilibili-fullscreen-sc/commit/54aa006e6e9a94fb9da111d3f725c8125c951473))
+
 ## [0.6.3](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.6.1...0.6.3) (2024-09-15)
 
 
