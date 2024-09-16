@@ -16,16 +16,19 @@ function App() {
         active: true,
         currentWindow: true,
       })
+      console.log('tab',tab)
       setIsMatch(MATCH_URL.test(tab.url as string))
     })()
   }, [setIsMatch])
 
   useLayoutEffect(() => {
     (async () => {
+      console.log('changeIcon',isMatch)
       if (!isMatch) {
         changeIcon(false)
       } else {
-        setSwitchState(await storage.getItem('session:switchState') ?? POPUP_INITIAL_STATE)
+        let tmp:boolean|null|undefined = await storage.getItem('session:switchState')
+        setSwitchState(tmp ?? POPUP_INITIAL_STATE)
       }
     })()
   }, [isMatch])
@@ -42,6 +45,8 @@ function App() {
 
     if (!switchState && prevSwitchState)
       onSwitch(false)
+    
+    console.log('switchState/prevSwitchState',switchState,prevSwitchState)
   },[switchState])
 
   return isMatch ? <Popup  switchState={switchState} switchChange={setSwitchState}/> : <Wrong />

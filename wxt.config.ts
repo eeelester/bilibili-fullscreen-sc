@@ -15,4 +15,11 @@ export default defineConfig({
   runner: {
     startUrls: ["https://live.bilibili.com/7777"],
   },
+  hooks: {
+    build: {
+      manifestGenerated(_,manifest: any) {
+        manifest.action.default_title = '在B站看直播全屏时展示SC';
+      },
+    },
+  },
 });
