@@ -5,7 +5,7 @@ export default defineConfig({
   modules: ['@wxt-dev/module-react'],
   manifest: {
     name: 'B站SC助手',
-    permissions: ['storage'],
+    permissions: ['storage','tabs'],
     icons: {
       "16": "./icons/icon-able-16.png",
       "32": "./icons/icon-able-32.png",
