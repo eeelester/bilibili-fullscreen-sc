@@ -1,5 +1,12 @@
 
 
+## [0.6.9](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.6.8...0.6.9) (2024-09-20)
+
+
+### ✨ Features | 新功能
+
+* 新增显示已存在的sc && 修复video在iframe下样式丢失问题 ([ea00332](https://github.com/eeelester/bilibili-fullscreen-sc/commit/ea0033272d0f930506ee2e13f772a319d34bc5ac))
+
 ## [0.6.8](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.6.7...0.6.8) (2024-09-17)
 
 
