@@ -17,6 +17,8 @@ export default defineContentScript({
         let switchState: boolean = true
         let isMount = false
 
+        injectIframeCss()
+
         // 判断全屏模式
         document.addEventListener(
             'fullscreenchange',
@@ -39,7 +41,7 @@ export default defineContentScript({
         // 判断video出现的时机，用setTimeout主要是方便，mutationobserver监听iframe里的节点麻烦
         (function loop() {
             setTimeout(function () {
-                const video = document.querySelector('video') || Array.from(document.querySelectorAll('iframe')).filter(item => item.allowFullscreen)[0]?.contentDocument?.querySelector('video')
+                const video = getVideoDom()
                 if (video) {
                     listenVideoSizeChange(video)
                 } else {
@@ -57,19 +59,14 @@ export default defineContentScript({
             console.log(log)
 
             existElement = document.createElement('div')
-            // 获取跟video的父级dom（B站video的父级dom结构老是变，有病的！）
-            const videoParent = document.querySelector('.live-player-mounter');
-            const iframe = Array.from(document.querySelectorAll('iframe')).filter(item => item.allowFullscreen)[0];
-            const videoParent2 = iframe?.contentDocument?.querySelector('.live-player-mounter');
-            (videoParent || videoParent2)?.appendChild(existElement)
-            console.log('videoParent', videoParent, videoParent2)
+            
+            const videoDom = getVideoDom()
+            console.log('videoParent',videoDom?.parentNode)
+            videoDom?.parentNode?.appendChild(existElement)
             root = createRoot(existElement)
             root.render(<SCList />)
-            // setTimeout(() => {
-            //   processData(testData as DanmuDataProps)
-            // }, 2000)
 
-            void getInfo()
+            getInfo()
         }
 
         function unmount(log: string) {
@@ -118,14 +115,28 @@ export default defineContentScript({
             const roomId = await fetch(`https://api.live.bilibili.com/room/v1/Room/get_info?room_id=${shortId}`)
                 .then(response => response.json())
                 .then((res) => {
-                    const { data: { room_id } = { room_id: 0 } } = res as { data: { room_id: number } }
+                    const { data: { room_id } = { room_id: 0 } } = res
                     return room_id
                 })
+            
+            const existingSCList = await fetch(`https://api.live.bilibili.com/xlive/web-room/v1/index/getInfoByRoom?room_id=${roomId}`)
+            .then(response => response.json())
+            .then((res) => {
+                const { data: { super_chat_info:{message_list} }} = res 
+                return message_list
+            })
+            if(Array.isArray(existingSCList) && existingSCList.length){
+                console.log('existingSCList',existingSCList)
+                for(let i of existingSCList){
+                    processData({data:i})
+                }
+            }
+
 
             const key = await fetch(`https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=${roomId}`)
                 .then(response => response.json())
                 .then((res) => {
-                    const { data: { token } = { token: '' } } = res as { data: { token: string } }
+                    const { data: { token } = { token: '' } } = res
                     return token
                 })
             liveWS = new LiveWS(roomId, {
@@ -136,6 +147,33 @@ export default defineContentScript({
                 console.log('SC', res)
                 processData(res as DanmuDataProps)
             })
+        }
+
+         // 获取跟video的父级dom（B站video的父级dom结构老是变，有病的！）
+        function getVideoDom(){
+            return document.querySelector('video') || getVideoDomFromIframe()?.contentDocument?.querySelector('video')
+        }
+
+        function getVideoDomFromIframe(){
+            return Array.from(document.querySelectorAll('iframe')).filter(item => item.allowFullscreen)[0]
+        }
+
+        // 有时候video在iframe里面，content-script.css的样式没法应用到里面去，所以将其应用到iframe head中
+        function injectIframeCss(){
+            const videoIframe = getVideoDomFromIframe()
+            if(videoIframe?.contentDocument?.querySelector('video')){
+                console.log('--------video在iframe里面，需要手动在iframe中注入样式文件---------')
+                // @ts-ignore
+                console.log(`extension css文件路径：`,browser.runtime.getURL('/content-scripts/content.css'))
+
+
+                const link = videoIframe.contentDocument.createElement('link');
+                link.rel = 'stylesheet';
+
+                // @ts-ignore
+                link.href = browser.runtime.getURL('/content-scripts/content.css'); // 扩展中的 CSS 文件路径
+                videoIframe.contentDocument.head.appendChild(link);
+            }
         }
 
         // 监听popup信息
