@@ -1,5 +1,12 @@
 
 
+## [0.6.10](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.6.9...0.6.10) (2024-09-22)
+
+
+### ✨ Features | 新功能
+
+* 新增删除sc按钮 ([2750358](https://github.com/eeelester/bilibili-fullscreen-sc/commit/275035879cdae99fd18202d559e43f82934d937e))
+
 ## [0.6.9](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.6.8...0.6.9) (2024-09-20)
 
 
