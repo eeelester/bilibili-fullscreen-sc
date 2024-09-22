@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client'
 import { LiveWS } from 'bilibili-live-ws'
 import SCList from '../components/ScList'
 
-// import { testData } from '../../dev/testData'
+// import { testData } from '../dev/testData'
 import { processData } from '@/utils'
 import type { DanmuDataProps } from '@/utils'
 
@@ -16,8 +16,8 @@ export default defineContentScript({
         let liveWS: LiveWS | null
         let switchState: boolean = true
         let isMount = false
+        let isFirst = true
 
-        injectIframeCss()
 
         // 判断全屏模式
         document.addEventListener(
@@ -58,6 +58,12 @@ export default defineContentScript({
 
             console.log(log)
 
+            if(isFirst){
+                injectIframeCss()
+                isFirst = false
+            }
+            
+
             existElement = document.createElement('div')
             
             const videoDom = getVideoDom()
@@ -65,6 +71,9 @@ export default defineContentScript({
             videoDom?.parentNode?.appendChild(existElement)
             root = createRoot(existElement)
             root.render(<SCList />)
+            // setTimeout(()=>{
+            //     processData(testData)
+            // },1000)
 
             getInfo()
         }
@@ -166,7 +175,10 @@ export default defineContentScript({
                 // @ts-ignore
                 console.log(`extension css文件路径：`,browser.runtime.getURL('/content-scripts/content.css'))
 
-
+                // browser.scripting.insertCSS({
+                //     target: { frameIds: [123456] },
+                //     files: ['content.css']
+                //   });
                 const link = videoIframe.contentDocument.createElement('link');
                 link.rel = 'stylesheet';
 
