@@ -2,8 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 type propRef = React.MutableRefObject<HTMLDivElement | undefined | null>
 
-function useMove(ref: propRef) {
-  const height = useMemo(() => document.documentElement.clientHeight, [])
+function useMove(ref: propRef, scDocument: Document) {
+  const height = useMemo(() => scDocument.documentElement.clientHeight, [])
   const [position, setPosition] = useState({ left: 10, bottom: 30, maxHeight: height - 30 })
   const movingRef = useRef(false)
   const lastPositionRef = useRef<{ lastX: number | null, lastY: number | null }>({ lastX: 0, lastY: 0 })
@@ -42,13 +42,13 @@ function useMove(ref: propRef) {
   useEffect(() => {
     const refDom = ref.current
     refDom?.addEventListener('mousedown', handleMouseDown)
-    document.addEventListener('mouseup', handleMouseUp)
-    document.addEventListener('mousemove', handleMouseMove)
+    scDocument.addEventListener('mouseup', handleMouseUp)
+    scDocument.addEventListener('mousemove', handleMouseMove)
 
     return () => {
       refDom?.removeEventListener('mousedown', handleMouseDown)
-      document.removeEventListener('mouseup', handleMouseUp)
-      document.removeEventListener('mousemove', handleMouseMove)
+      scDocument.removeEventListener('mouseup', handleMouseUp)
+      scDocument.removeEventListener('mousemove', handleMouseMove)
     }
   }, [ref, handleMouseDown, handleMouseUp, handleMouseMove])
 

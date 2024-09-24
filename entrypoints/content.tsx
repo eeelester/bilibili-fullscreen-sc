@@ -17,6 +17,7 @@ export default defineContentScript({
         let switchState: boolean = true
         let isMount = false
         let isFirst = true
+        let isInIframe = false
 
 
         // 判断全屏模式
@@ -58,22 +59,22 @@ export default defineContentScript({
 
             console.log(log)
 
-            if(isFirst){
+            if (isFirst) {
                 injectIframeCss()
                 isFirst = false
             }
-            
+
 
             existElement = document.createElement('div')
-            
+
             const videoDom = getVideoDom()
-            console.log('videoParent',videoDom?.parentNode)
+            console.log('videoParent', videoDom?.parentNode)
             videoDom?.parentNode?.appendChild(existElement)
             root = createRoot(existElement)
-            root.render(<SCList />)
-            // setTimeout(()=>{
+            root.render(<SCList scDocument={isInIframe ? getVideoDomFromIframe().contentDocument as Document : document} />)
+            // setTimeout(() => {
             //     processData(testData)
-            // },1000)
+            // }, 1000)
 
             getInfo()
         }
@@ -127,17 +128,17 @@ export default defineContentScript({
                     const { data: { room_id } = { room_id: 0 } } = res
                     return room_id
                 })
-            
+
             const existingSCList = await fetch(`https://api.live.bilibili.com/xlive/web-room/v1/index/getInfoByRoom?room_id=${roomId}`)
-            .then(response => response.json())
-            .then((res) => {
-                const { data: { super_chat_info:{message_list} }} = res 
-                return message_list
-            })
-            if(Array.isArray(existingSCList) && existingSCList.length){
-                console.log('existingSCList',existingSCList)
-                for(let i of existingSCList){
-                    processData({data:i})
+                .then(response => response.json())
+                .then((res) => {
+                    const { data: { super_chat_info: { message_list } } } = res
+                    return message_list
+                })
+            if (Array.isArray(existingSCList) && existingSCList.length) {
+                console.log('existingSCList', existingSCList)
+                for (let i of existingSCList) {
+                    processData({ data: i })
                 }
             }
 
@@ -158,27 +159,24 @@ export default defineContentScript({
             })
         }
 
-         // 获取跟video的父级dom（B站video的父级dom结构老是变，有病的！）
-        function getVideoDom(){
+        // 获取跟video的父级dom（B站video的父级dom结构老是变，有病的！）
+        function getVideoDom() {
             return document.querySelector('video') || getVideoDomFromIframe()?.contentDocument?.querySelector('video')
         }
 
-        function getVideoDomFromIframe(){
+        function getVideoDomFromIframe() {
             return Array.from(document.querySelectorAll('iframe')).filter(item => item.allowFullscreen)[0]
         }
 
         // 有时候video在iframe里面，content-script.css的样式没法应用到里面去，所以将其应用到iframe head中
-        function injectIframeCss(){
+        function injectIframeCss() {
             const videoIframe = getVideoDomFromIframe()
-            if(videoIframe?.contentDocument?.querySelector('video')){
+            if (videoIframe?.contentDocument?.querySelector('video')) {
                 console.log('--------video在iframe里面，需要手动在iframe中注入样式文件---------')
                 // @ts-ignore
-                console.log(`extension css文件路径：`,browser.runtime.getURL('/content-scripts/content.css'))
+                console.log(`extension css文件路径：`, browser.runtime.getURL('/content-scripts/content.css'))
 
-                // browser.scripting.insertCSS({
-                //     target: { frameIds: [123456] },
-                //     files: ['content.css']
-                //   });
+                isInIframe = true
                 const link = videoIframe.contentDocument.createElement('link');
                 link.rel = 'stylesheet';
 
@@ -189,7 +187,7 @@ export default defineContentScript({
         }
 
         // 监听popup信息
-        browser.runtime.onMessage.addListener((request: { switchState: boolean }, _, sendResponse:(str:string)=>void) => {
+        browser.runtime.onMessage.addListener((request: { switchState: boolean }, _, sendResponse: (str: string) => void) => {
             switchState = request.switchState
             sendResponse('content got!')
         })

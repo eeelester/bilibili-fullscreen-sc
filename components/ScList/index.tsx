@@ -24,10 +24,15 @@ interface ScInfo {
   nodeRef: React.RefObject<HTMLDivElement | unknown>
 }
 
-function SCList() {
+interface SCListProps {
+  scDocument: Document
+}
+
+function SCList(props: SCListProps) {
+  const { scDocument } = props
   const [scList, setScList] = useState<ScInfo[]>([])
   const scListRef = useRef<HTMLDivElement>(null)
-  const { left, bottom, maxHeight } = useMove(scListRef)
+  const { left, bottom, maxHeight } = useMove(scListRef, scDocument)
   const timeoutMap = useRef(new Map<number, NodeJS.Timeout>())
 
   const Listener = useCallback((scInfo: ScInfo) => {
@@ -35,7 +40,7 @@ function SCList() {
     if (Array.isArray(existDeleteIdList) && existDeleteIdList.indexOf(scInfo.id) > -1) {
       console.log(`该id已被删除`)
       return
-    } 
+    }
     setScList(prev => prev.concat({ ...scInfo, nodeRef: createRef() }))
     const { id, time } = scInfo
     if (!timeoutMap.current.has(id)) {
