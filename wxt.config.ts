@@ -19,6 +19,12 @@ export default defineConfig({
     build: {
       manifestGenerated(_,manifest: any) {
         manifest.action.default_title = '在B站看直播全屏时展示SC';
+        manifest.web_accessible_resources = [
+          {
+            "resources": [ "*.css" ],
+            "matches": [ "https://live.bilibili.com/*" ]
+          }
+        ]
       },
     },
   },
