@@ -1,5 +1,12 @@
 
 
+## [0.7.0](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.6.10...0.7.0) (2024-09-24)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* 修复iframe下样式权限加载问题 ([72c83f8](https://github.com/eeelester/bilibili-fullscreen-sc/commit/72c83f8a173c42f5fc4905e6ddcdc01233b57646))
+
 ## [0.6.10](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.6.9...0.6.10) (2024-09-22)
 
 
