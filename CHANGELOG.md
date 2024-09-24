@@ -1,5 +1,12 @@
 
 
+## [0.7.1](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.7.0...0.7.1) (2024-09-24)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* 修复在iframe下无法拖动sc列表问题 ([861ec89](https://github.com/eeelester/bilibili-fullscreen-sc/commit/861ec8901de4b03a3511b0be9e6b66605592fdde))
+
 ## [0.7.0](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.6.10...0.7.0) (2024-09-24)
 
 
