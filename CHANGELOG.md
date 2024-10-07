@@ -1,5 +1,12 @@
 
 
+## [0.7.2](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.7.1...0.7.2) (2024-10-07)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* 有时候网页全屏模式无法正确显示sc的问题 ([dd2a625](https://github.com/eeelester/bilibili-fullscreen-sc/commit/dd2a6258ca73d8d11ce9795e208da8f16863d267))
+
 ## [0.7.1](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.7.0...0.7.1) (2024-09-24)
 
 
