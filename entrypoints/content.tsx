@@ -39,19 +39,17 @@ export default defineContentScript({
             true,
         );
 
-        // 判断video出现的时机，用setTimeout主要是方便，mutationobserver监听iframe里的节点麻烦
-        (function loop() {
-            setTimeout(function () {
-                const video = getVideoDom()
-                if (video) {
-                    listenVideoSizeChange(video)
-                } else {
-                    loop();
-                }
-            }, 500);
-        })()
+        // 判断video出现的时机，没用mutationobserver是因为监听iframe里的节点麻烦
+        function loop() {
+            const video = getVideoDom()
+            if (video) {
+                listenVideoSizeChange(video)
+            } else {
+                window.requestAnimationFrame(loop);
+            }
+        }
 
-
+        window.requestAnimationFrame(loop);
 
         function mount(log: string) {
             if (isMount) return

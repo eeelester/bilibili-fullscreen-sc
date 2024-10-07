@@ -14,7 +14,7 @@ stats.html
 stats-*.json
 .wxt
 web-ext.config.ts
-.env.submit
+.env.submit*
 
 # Editor directories and files
 .vscode/*
