@@ -1,5 +1,12 @@
 
 
+## [0.7.3](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.7.2...0.7.3) (2024-10-08)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* 切换清晰度后无法正确监听video宽度变化 ([8260dba](https://github.com/eeelester/bilibili-fullscreen-sc/commit/8260dba2d8149d769845c007e81bc44cd4836bca))
+
 ## [0.7.2](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.7.1...0.7.2) (2024-10-07)
 
 
