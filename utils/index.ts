@@ -42,6 +42,7 @@ export interface DanmuDataProps {
     background_color: string
     time: number
     id: number
+    delay: number  // existing sc的属性
   }
   [propNames: string]: any
 }
@@ -66,6 +67,7 @@ function processData(res: DanmuDataProps) {
       background_color = '',
       time = 0,
       id = 0,
+      delay = 0
     },
   } = res
 
@@ -81,6 +83,7 @@ function processData(res: DanmuDataProps) {
     background_color,
     time,
     id,
+    delay
   })
 }
 
