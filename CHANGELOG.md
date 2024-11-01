@@ -1,5 +1,12 @@
 
 
+## [0.7.4](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.7.3...0.7.4) (2024-11-01)
+
+
+### ✨ Features | 新功能
+
+* 已存在的sc展示已显示时间 ([8f2bdf3](https://github.com/eeelester/bilibili-fullscreen-sc/commit/8f2bdf3bc2ea8fcf74675c6f8ac11af7dbd92a3c))
+
 ## [0.7.3](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.7.2...0.7.3) (2024-10-08)
 
 
