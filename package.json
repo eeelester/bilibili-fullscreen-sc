@@ -24,7 +24,7 @@
     "zip": "wxt zip",
     "compile": "tsc --noEmit",
     "postinstall": "wxt prepare",
-    "lint": "eslint  src/** --fix",
+    "lint": "eslint  . --fix",
     "test": "jest",
     "prepare": "husky install",
     "release": "release-it"

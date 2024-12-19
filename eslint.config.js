@@ -19,13 +19,16 @@ module.exports = antfu(
     },
     ignores: [
       '*.config.js',
+      '*.config.ts',
       'test/**'
     ]
   },
   {
     files: ['**/*.tsx', '**/*.ts'],
     rules: {
-      "react-hooks/exhaustive-deps": "warn"
+      "react-hooks/exhaustive-deps": "warn",
+      "no-console":"off",
+      "import/no-mutable-exports": "warn"
     },
   },
   ...compat.config({

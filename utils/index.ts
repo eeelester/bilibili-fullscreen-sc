@@ -6,9 +6,9 @@ import { WS_SC_EVENT } from '@/constant'
  * @param {boolean} switchState
  * @return {*}
  */
-function changeIcon(switchState: boolean) {
+async function changeIcon(switchState: boolean) {
   if (switchState) {
-    browser.action.setIcon({
+    await browser.action.setIcon({
       path: {
         16: '/icons/icon-able-16.png',
         32: '/icons/icon-able-32.png',
@@ -17,7 +17,7 @@ function changeIcon(switchState: boolean) {
     })
   }
   else {
-    browser.action.setIcon({
+    await browser.action.setIcon({
       path: {
         16: '/icons/icon-16.png',
         32: '/icons/icon-32.png',
@@ -42,7 +42,7 @@ export interface DanmuDataProps {
     background_color: string
     time: number
     id: number
-    delay: number  // existing sc的属性
+    delay: number // existing sc的属性
   }
   [propNames: string]: any
 }
@@ -67,7 +67,7 @@ function processData(res: DanmuDataProps) {
       background_color = '',
       time = 0,
       id = 0,
-      delay = 0
+      delay = 0,
     },
   } = res
 
@@ -83,7 +83,7 @@ function processData(res: DanmuDataProps) {
     background_color,
     time,
     id,
-    delay
+    delay,
   })
 }
 
