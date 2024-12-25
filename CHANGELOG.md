@@ -1,5 +1,27 @@
 
 
+## [0.8.0](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.7.4...0.8.0) (2024-12-25)
+
+
+### ✨ Features | 新功能
+
+* 增加评论区显示IP属地的功能 ([6b5ad00](https://github.com/eeelester/bilibili-fullscreen-sc/commit/6b5ad004f02d719934eefc635b3380be22f4a5cb))
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* 修复网页全屏模式和全屏模式切换异常问题；content-script代码优化 ([23cae4d](https://github.com/eeelester/bilibili-fullscreen-sc/commit/23cae4dddf62481146b39f882ddbd9900b8fff68))
+
+
+### 💄 Styles | 风格
+
+* 格式化代码 ([5dee536](https://github.com/eeelester/bilibili-fullscreen-sc/commit/5dee536d2c6e579335cf3a8b9df63f0abe37fdb2))
+
+
+### ♻ Code Refactoring | 代码重构
+
+* 去掉关于开关显示和控制代码 ([a41d904](https://github.com/eeelester/bilibili-fullscreen-sc/commit/a41d904b4f468c0e6a4cea8d6e077c5770318122))
+
 ## [0.7.4](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.7.3...0.7.4) (2024-11-01)
 
 
