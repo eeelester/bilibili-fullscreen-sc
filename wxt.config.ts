@@ -8,7 +8,7 @@ export default defineConfig({
   modules: ['@wxt-dev/module-react'],
   manifest: {
     name: 'B站助手，全屏显示SC，评论显示IP属地',
-    permissions: ['storage', 'tabs'],
+    permissions: ['storage'],
     icons: {
       16: './icons/icon-able-16.png',
       32: './icons/icon-able-32.png',
@@ -20,8 +20,7 @@ export default defineConfig({
   },
   hooks: {
     build: {
-      manifestGenerated(_, manifest: any) {
-        manifest.action.default_title = '在B站看直播全屏时展示SC'
+      manifestGenerated(_, manifest) {
         manifest.web_accessible_resources = [
           {
             resources: ['*.css'],

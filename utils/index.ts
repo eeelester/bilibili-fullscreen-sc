@@ -1,31 +1,6 @@
 import { eventBus } from '@/utils/event'
 import { WS_SC_EVENT } from '@/constant'
 
-/**
- * @description: 更改icon图标，根据state改为able和disable
- * @param {boolean} switchState
- * @return {*}
- */
-async function changeIcon(switchState: boolean) {
-  if (switchState) {
-    await browser.action.setIcon({
-      path: {
-        16: '/icons/icon-able-16.png',
-        32: '/icons/icon-able-32.png',
-        48: '/icons/icon-able-48.png',
-      },
-    })
-  }
-  else {
-    await browser.action.setIcon({
-      path: {
-        16: '/icons/icon-16.png',
-        32: '/icons/icon-32.png',
-        48: '/icons/icon-48.png',
-      },
-    })
-  }
-}
 
 export interface DanmuDataProps {
   data: {
@@ -87,4 +62,4 @@ function processData(res: DanmuDataProps) {
   })
 }
 
-export { changeIcon, processData }
+export { processData }

@@ -1,6 +1,5 @@
 import { existElement, mount, unmount } from './utils'
 import ObservePageFullScreen from './observePageFullScreen'
-import { popUpOnMessage } from './comm'
 
 export default defineContentScript({
   matches: ['https://live.bilibili.com/*'],
@@ -23,7 +22,5 @@ export default defineContentScript({
     // 监听网页全屏模式
     ObservePageFullScreen()
 
-    // 监听popup传输数据
-    popUpOnMessage()
   },
 })

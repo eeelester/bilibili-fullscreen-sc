@@ -2,7 +2,6 @@ import { createRoot } from 'react-dom/client'
 import type { Root } from 'react-dom/client'
 import { LiveWS } from 'bilibili-live-ws'
 import { ALREADY_HAVE_IT } from './const'
-import { switchState } from './comm'
 import type { DanmuInfo, RoomDetailInfo, RoomInfo } from './types'
 import SCList from '@/components/ScList'
 import type { DanmuDataProps } from '@/utils'
@@ -21,9 +20,6 @@ export let existElement: HTMLElement | null
 export function mount(log: string) {
   if (isMount)
     return ALREADY_HAVE_IT
-  // 当用户在popup关闭此功能后
-  if (!switchState)
-    return
 
   isMount = true
 
