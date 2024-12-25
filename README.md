@@ -26,6 +26,8 @@ pnpm build
 
 点击左上角“加载已解压的拓展程序”按钮，选择打包后的 dist 文件夹，然后刷新页面即可。
 
-## License
+---
 
-ISC
+### 感谢
+ #### 评论显示IP属地使用的是： [Web-Show-IP-Location](https://github.com/maxchang3/Bilibili-Web-Show-IP-Location) 
+
