@@ -1,4 +1,5 @@
 ### 这是一款chrome插件，功能如下：
+
 - 在bilibili网页上看全屏/网页全屏时直播时能够控制是否显示醒目留言（SC）
 - 评论区显示IP属地（来源于[Web-Show-IP-Location](https://github.com/maxchang3/Bilibili-Web-Show-IP-Location) ）
 
@@ -31,5 +32,5 @@ pnpm build
 ---
 
 ### 感谢
- #### 评论显示IP属地使用的是： [Web-Show-IP-Location](https://github.com/maxchang3/Bilibili-Web-Show-IP-Location) 
 
+#### 评论显示IP属地使用的是： [Web-Show-IP-Location](https://github.com/maxchang3/Bilibili-Web-Show-IP-Location)

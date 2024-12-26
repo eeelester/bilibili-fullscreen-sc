@@ -1,7 +1,6 @@
 import { eventBus } from '@/utils/event'
 import { WS_SC_EVENT } from '@/constant'
 
-
 export interface DanmuDataProps {
   data: {
     user_info: {

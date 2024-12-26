@@ -21,6 +21,5 @@ export default defineContentScript({
 
     // 监听网页全屏模式
     ObservePageFullScreen()
-
   },
 })

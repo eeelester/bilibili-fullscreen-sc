@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         哔哩哔哩网页版显示 IP 属地 B站 Bilibili IP 属地显示
 // @namespace    http://zhangmaimai.com
-// @version      1.6.3
+// @version      1.6.4
 // @author       MaxChang3
 // @description  我不喜欢 IP 属地，但是你手机都显示了，为什么电脑不显示呢？显示网页版 B 站 IP 属地，支持大部分场景的评论区
 // @license      MIT
@@ -28,21 +28,16 @@
 
   var __defProp = Object.defineProperty;
   var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-  var __publicField = (obj, key, value) => {
-    __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-    return value;
-  };
+  var __publicField = (obj, key, value) => __defNormalProp(obj, key + "" , value);
   var _unsafeWindow = /* @__PURE__ */ (() => typeof window != "undefined" ? window : void 0)();
   const isElementLoaded = async (selector, root = document) => {
     const getElement = () => root.querySelector(selector);
     return new Promise((resolve) => {
       const element = getElement();
-      if (element)
-        return resolve(element);
+      if (element) return resolve(element);
       const observer = new MutationObserver((_) => {
         const element2 = getElement();
-        if (!element2)
-          return;
+        if (!element2) return;
         resolve(element2);
         observer.disconnect();
       });
@@ -60,8 +55,7 @@
           clearInterval(interval);
           resolve(false);
         }
-        if (!fn())
-          return;
+        if (!fn()) return;
         clearInterval(interval);
         resolve(true);
       }, 100);
@@ -85,10 +79,8 @@
     }
     match(url) {
       for (const { prefix, action, constrait } of this.routes) {
-        if (!url.startsWith(prefix))
-          continue;
-        if (constrait.endsWith && !url.endsWith(constrait.endsWith))
-          continue;
+        if (!url.startsWith(prefix)) continue;
+        if (constrait.endsWith && !url.endsWith(constrait.endsWith)) continue;
         action();
         break;
       }
@@ -99,13 +91,11 @@
       update() {
         super.update();
         const pubDateEl = this.shadowRoot.querySelector("#pubdate");
-        if (!pubDateEl)
-          return;
+        if (!pubDateEl) return;
         let locationEl = this.shadowRoot.querySelector("#location");
         const locationString = getLocationString(this.data);
         if (!locationString) {
-          if (locationEl)
-            locationEl.remove();
+          if (locationEl) locationEl.remove();
           return;
         }
         if (locationEl) {
@@ -124,8 +114,7 @@
     const { define: originalDefine } = _unsafeWindow.customElements;
     const applyHandler = (target, thisArg, args) => {
       const [name, constructor, ...rest] = args;
-      if (typeof constructor !== "function" || name !== "bili-comment-action-buttons-renderer")
-        return Reflect.apply(target, thisArg, args);
+      if (typeof constructor !== "function" || name !== "bili-comment-action-buttons-renderer") return Reflect.apply(target, thisArg, args);
       const PatchActionButtonsRender = createPatch(constructor);
       return Reflect.apply(target, thisArg, [name, PatchActionButtonsRender, ...rest]);
     };
@@ -175,8 +164,7 @@
   };
   const insertLocation = (replyItemEl) => {
     const replyInfo = replyItemEl.className.startsWith("sub") ? replyItemEl.querySelector(".sub-reply-info") : replyItemEl.querySelector(".reply-info");
-    if (!replyInfo)
-      throw new Error("Can not detect reply info");
+    if (!replyInfo) throw new Error("Can not detect reply info");
     const locationString = getLocationFromReply(replyItemEl);
     if (locationString && replyInfo.children.length !== 0 && !replyInfo.children[0].innerHTML.includes("IP属地")) {
       replyInfo.children[0].innerHTML += `&nbsp;&nbsp;${locationString}`;
@@ -187,17 +175,13 @@
     const targetNode = await isElementLoaded(".reply-list", root);
     const observer = new MutationObserver((mutationsList) => {
       for (const mutation of mutationsList) {
-        if (mutation.type !== "childList")
-          continue;
+        if (mutation.type !== "childList") continue;
         mutation.addedNodes.forEach((node) => {
-          if (!isReplyItem(node))
-            return;
+          if (!isReplyItem(node)) return;
           insertLocation(node);
-          if (node.className.startsWith("sub"))
-            return;
+          if (node.className.startsWith("sub")) return;
           const subReplyListEl = node.querySelector(".sub-reply-list");
-          if (!subReplyListEl)
-            return;
+          if (!subReplyListEl) return;
           const subReplyList = Array.from(subReplyListEl.children);
           subReplyList.pop();
           subReplyList.map(insertLocation);
@@ -211,8 +195,7 @@
     let lastObserved;
     const observer = new MutationObserver((mutationsList) => {
       for (const mutation of mutationsList) {
-        if (mutation.type !== "childList" || !(mutation.target instanceof HTMLElement) || !mutation.target.classList.contains("bili-comment-container") || mutation.target === lastObserved)
-          continue;
+        if (mutation.type !== "childList" || !(mutation.target instanceof HTMLElement) || !mutation.target.classList.contains("bili-comment-container") || mutation.target === lastObserved) continue;
         observeAndInjectComments(mutation.target);
         lastObserved = mutation.target;
       }
@@ -248,8 +231,7 @@
         return !!(readInfo && ((_a2 = readInfo.lastElementChild) == null ? void 0 : _a2.textContent) !== "--评论");
       });
       const publishText = articleDetail.querySelector(".publish-text");
-      if (!publishText || !((_b = (_a = articleDetail.__vue__) == null ? void 0 : _a.readViewInfo) == null ? void 0 : _b.location))
-        return;
+      if (!publishText || !((_b = (_a = articleDetail.__vue__) == null ? void 0 : _a.readViewInfo) == null ? void 0 : _b.location)) return;
       publishText.innerHTML += `&nbsp;&nbsp;IP属地：${articleDetail.__vue__.readViewInfo.location}`;
     }
   );
@@ -284,7 +266,7 @@
   }, { endsWith: "/" });
   router.serve("https://t.bilibili.com/", async () => {
     const dynItem = await isElementLoaded(".bili-dyn-item");
-    const isNewDyn = dynItem.querySelector(".bili-dyn-item__footer");
+    const isNewDyn = !dynItem.querySelector(".bili-dyn-item__footer");
     if (isNewDyn) {
       hookLit();
     } else {
@@ -293,6 +275,8 @@
   });
   router.serve("https://www.bilibili.com/blackroom/ban/", () => hookBBComment({ blackroom: true }));
   router.serve("https://manga.bilibili.com/detail/", observeAndInjectComments);
-  router.match(location.href);
+  const { origin, pathname } = new URL(location.href);
+  const urlWithoutQueryOrHash = `${origin}${pathname}`;
+  router.match(urlWithoutQueryOrHash);
 
 })();
