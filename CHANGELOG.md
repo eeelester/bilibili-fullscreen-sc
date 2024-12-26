@@ -1,5 +1,12 @@
 
 
+## [0.8.2](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.8.1...0.8.2) (2024-12-26)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* 修复评论区无法显示定位问题 ([364b754](https://github.com/eeelester/bilibili-fullscreen-sc/commit/364b7545ee46263dc475b529967e422d38825a87))
+
 ## [0.8.1](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.7.4...0.8.1) (2024-12-26)
 
 
