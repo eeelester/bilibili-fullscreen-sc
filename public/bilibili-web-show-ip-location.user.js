@@ -284,7 +284,7 @@
   }, { endsWith: "/" });
   router.serve("https://t.bilibili.com/", async () => {
     const dynItem = await isElementLoaded(".bili-dyn-item");
-    const isNewDyn = !dynItem.querySelector(".bili-dyn-item__footer");
+    const isNewDyn = dynItem.querySelector(".bili-dyn-item__footer");
     if (isNewDyn) {
       hookLit();
     } else {
