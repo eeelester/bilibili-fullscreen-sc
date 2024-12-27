@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import type { ScInfo } from './type'
 
 type propRef = React.MutableRefObject<HTMLDivElement | undefined | null>
 
@@ -55,4 +56,24 @@ function useMove(ref: propRef, scDocument: Document) {
   return { ...position }
 }
 
-export { useMove }
+function useRAF(setScList: React.Dispatch<React.SetStateAction<ScInfo[]>>) {
+  const animationId = useRef<number>()
+
+  useEffect(() => {
+    const loop = () => {
+      const currentTime = Date.now() // 当前时间
+      setScList(prev =>
+        prev.filter(item => currentTime - item.addedTime < (item.time - item.delay) * 1000), // 过滤掉超时的项
+      )
+
+      animationId.current = requestAnimationFrame(loop)
+    }
+
+    animationId.current = requestAnimationFrame(loop)
+    return () => {
+      animationId.current && cancelAnimationFrame(animationId.current)
+    }
+  }, [])
+}
+
+export { useMove, useRAF }

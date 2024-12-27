@@ -7,7 +7,13 @@ interface PluginOptions {
   replacement: string
 }
 
-export function ReplaceUnsafeWindowPlugin(options: PluginOptions) {
+interface PluginReturn {
+  name: string
+  apply: 'build'
+  closeBundle: () => void
+}
+
+export function ReplaceUnsafeWindowPlugin(options: PluginOptions): PluginReturn {
   return {
     name: 'vite-plugin-replace-unsafeWindow',
     apply: 'build',

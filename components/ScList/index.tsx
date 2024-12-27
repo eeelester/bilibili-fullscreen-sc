@@ -1,37 +1,18 @@
 import { createRef, useCallback, useEffect, useRef, useState } from 'react'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
-import { useMove } from './hook'
+import { useMove, useRAF } from './hook'
+import type { SCListProps, ScInfo } from './type'
 import { eventBus } from '@/utils/event'
 import { WS_SC_EVENT } from '@/constant'
 import closeIcon from '~/assets/close.svg'
 import './index.less'
-
-interface ScInfo {
-  face: string
-  face_frame: string
-  uname: string
-  name_color: string
-  price: number
-  message: string
-  message_font_color: string
-  background_bottom_color: string
-  background_color: string
-  id: number
-  time: number
-  nodeRef: React.RefObject<HTMLDivElement | unknown>
-  delay: number
-}
-
-interface SCListProps {
-  scDocument: Document
-}
 
 function SCList(props: SCListProps) {
   const { scDocument } = props
   const [scList, setScList] = useState<ScInfo[]>([])
   const scListRef = useRef<HTMLDivElement>(null)
   const { left, bottom, maxHeight } = useMove(scListRef, scDocument)
-  const timeoutMap = useRef(new Map<number, NodeJS.Timeout>())
+  useRAF(setScList)
 
   const Listener = useCallback((scInfo: ScInfo) => {
     const existDeleteIdList: unknown = JSON.parse(sessionStorage.getItem('deleteId') ?? 'null')
@@ -39,29 +20,14 @@ function SCList(props: SCListProps) {
       console.log(`该id已被删除`)
       return
     }
-    setScList(prev => prev.concat({ ...scInfo, nodeRef: createRef() }))
-    const { id, time } = scInfo
-    if (!timeoutMap.current.has(id)) {
-      const timeout = setTimeout(() => {
-        setScList(prev => prev.filter(item => item.id !== id))
-      }, time * 1000)
-
-      timeoutMap.current.set(id, timeout)
-    }
+    setScList(prev => prev.concat({ ...scInfo, nodeRef: createRef(), addedTime: Date.now() }))
   }, [])
 
   useEffect(() => {
     eventBus.subscribe(WS_SC_EVENT, Listener)
 
-    let timeoutMapRefValue: Map<number, NodeJS.Timeout> | null = null
-
-    if (timeoutMap.current)
-      timeoutMapRefValue = timeoutMap.current
-
     return () => {
       eventBus.unsubscribe(WS_SC_EVENT, Listener)
-      if (timeoutMapRefValue?.size && timeoutMapRefValue.size > 0)
-        for (const [_, value] of timeoutMapRefValue.entries()) clearTimeout(value)
     }
   }, [Listener])
 

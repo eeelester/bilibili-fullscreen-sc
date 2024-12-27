@@ -7,7 +7,7 @@ import SCList from '@/components/ScList'
 import type { DanmuDataProps } from '@/utils'
 import { processData } from '@/utils'
 
-// import { testData } from "../dev/testData";
+// import { testData } from "@/dev/testData";
 
 let isFirst = true
 let isMount = false
@@ -37,10 +37,11 @@ export function mount(log: string) {
   videoDom?.parentNode?.appendChild(existElement)
   root = createRoot(existElement)
   root.render(<SCList scDocument={isInIframe ? (getVideoDomFromIframe().contentDocument as Document) : document} />)
-  // setTimeout(() => {
-  //     processData(testData);
-  // }, 1000);
 
+  // setTimeout(() => {
+  //   processData({ ...testData, data: { ...testData.data, time: 10, delay: 5 } });
+
+  // }, 1000);
   void getInfo()
 }
 
@@ -67,7 +68,7 @@ function injectIframeCss() {
     console.log(
       `extension css文件路径：`,
       // @ts-expect-error: 实际是有的
-      browser.runtime.getURL('/content-scripts/content.css'),
+      browser.runtime.getURL('/content-scripts/fullScreen.css'),
     )
 
     isInIframe = true
@@ -76,7 +77,7 @@ function injectIframeCss() {
 
     link.href = browser.runtime.getURL(
       // @ts-expect-error: 实际是有的
-      '/content-scripts/content.css',
+      '/content-scripts/fullScreen.css',
     ) // 扩展中的 CSS 文件路径
     videoIframe.contentDocument.head.appendChild(link)
   }
