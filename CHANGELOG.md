@@ -1,5 +1,12 @@
 
 
+## [0.8.3](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.8.2...0.8.3) (2024-12-27)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* iframe加载video时样式丢失；切换tab导致sc列表定时器不准 ([3df5a89](https://github.com/eeelester/bilibili-fullscreen-sc/commit/3df5a8974432cd68b433af9b07ae865080c80d82))
+
 ## [0.8.2](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.8.1...0.8.2) (2024-12-26)
 
 
