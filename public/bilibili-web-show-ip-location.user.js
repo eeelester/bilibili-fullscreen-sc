@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         哔哩哔哩网页版显示 IP 属地 B站 Bilibili IP 属地显示
 // @namespace    http://zhangmaimai.com
-// @version      1.6.4
+// @version      1.6.5
 // @author       MaxChang3
 // @description  我不喜欢 IP 属地，但是你手机都显示了，为什么电脑不显示呢？显示网页版 B 站 IP 属地，支持大部分场景的评论区
 // @license      MIT
@@ -244,12 +244,29 @@
     }
   });
   router.serve("https://www.bilibili.com/v/topic/detail/", () => serveNewComments(".list-view"));
-  router.serve("https://space.bilibili.com/", () => serveNewComments(".bili-dyn-list__items"), { endsWith: "dynamic" });
   router.serve("https://space.bilibili.com/", async () => {
-    const dynamicTab = await isElementLoaded(".n-dynamic");
-    dynamicTab.addEventListener("click", () => {
+    const biliMainHeader = await isElementLoaded("#biliMainHeader");
+    const isFreshSpaceDynamic = (biliMainHeader == null ? void 0 : biliMainHeader.tagName) === "HEADER";
+    if (isFreshSpaceDynamic) {
+      hookLit();
+    } else {
       serveNewComments(".bili-dyn-list__items");
-    }, { once: true });
+    }
+  }, { endsWith: "dynamic" });
+  router.serve("https://space.bilibili.com/", async () => {
+    const biliMainHeader = await isElementLoaded("#biliMainHeader");
+    const isFreshSpaceDynamic = (biliMainHeader == null ? void 0 : biliMainHeader.tagName) === "HEADER";
+    if (isFreshSpaceDynamic) {
+      const newDyanmicTab = await isElementLoaded(".nav-tab__item:nth-child(2)");
+      newDyanmicTab.addEventListener("click", () => {
+        hookLit();
+      }, { once: true });
+    } else {
+      const oldDynamicTab = await isElementLoaded(".n-dynamic");
+      oldDynamicTab.addEventListener("click", () => {
+        serveNewComments(".bili-dyn-list__items");
+      }, { once: true });
+    }
   });
   router.serve("https://t.bilibili.com/", async () => {
     const dynHome = await isElementLoaded(".bili-dyn-home--member");

@@ -5,7 +5,7 @@ type propRef = React.MutableRefObject<HTMLDivElement | undefined | null>
 
 function useMove(ref: propRef, scDocument: Document) {
   const height = useMemo(() => scDocument.documentElement.clientHeight, [])
-  const [position, setPosition] = useState({ left: 10, bottom: 30, maxHeight: height - 30 })
+  const [position, setPosition] = useState({ left: 10, bottom: 140, maxHeight: height - 30 })
   const movingRef = useRef(false)
   const lastPositionRef = useRef<{ lastX: number | null, lastY: number | null }>({ lastX: 0, lastY: 0 })
 

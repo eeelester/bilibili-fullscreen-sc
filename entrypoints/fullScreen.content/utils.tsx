@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client'
 import type { Root } from 'react-dom/client'
-import { LiveWS } from 'bilibili-live-ws'
+import { KeepLiveWS } from 'bilibili-live-ws'
 import { ALREADY_HAVE_IT } from './const'
 import type { DanmuInfo, RoomDetailInfo, RoomInfo } from './types'
 import SCList from '@/components/ScList'
@@ -13,7 +13,7 @@ let isFirst = true
 let isMount = false
 let isInIframe = false
 let root: Root | null
-let liveWS: LiveWS | null
+let keepLiveWS: KeepLiveWS | null
 
 export let existElement: HTMLElement | null
 
@@ -55,8 +55,8 @@ export function unmount(log: string) {
   root = null
   existElement?.parentNode?.removeChild(existElement)
   existElement = null
-  liveWS?.close()
-  liveWS = null
+  keepLiveWS?.close()
+  keepLiveWS = null
 }
 
 // 有时候video在iframe里面，content-script.css的样式没法应用到里面去，所以将其应用到iframe head中
@@ -116,11 +116,11 @@ async function getInfo() {
       const { data: { token } = { token: '' } } = res
       return token
     })
-  liveWS = new LiveWS(roomId, {
+  keepLiveWS = new KeepLiveWS(roomId, {
     protover: 3,
     key,
   })
-  liveWS.on('SUPER_CHAT_MESSAGE', (res: DanmuDataProps) => {
+  keepLiveWS.on('SUPER_CHAT_MESSAGE', (res: DanmuDataProps) => {
     console.log('SC', res)
     processData(res)
   })

@@ -10,9 +10,9 @@ export default defineConfig({
     name: 'B站助手，全屏显示SC，评论显示IP属地',
     permissions: ['storage'],
     icons: {
-      16: './icons/icon-able-16.png',
-      32: './icons/icon-able-32.png',
-      48: './icons/icon-able-48.png',
+      16: './icons/icon-16.png',
+      32: './icons/icon-32.png',
+      48: './icons/icon-48.png',
     },
   },
   runner: {
@@ -27,7 +27,7 @@ export default defineConfig({
             matches: ['https://live.bilibili.com/*'],
           },
           {
-            resources: ['bilibili-web-show-ip-location.user.js'],
+            resources: ['bilibili-web-show-ip-location.user.js', 'hook-vue3-proxy.js'],
             matches: ['https://bilibili.com/*', 'https://*.bilibili.com/*'],
           },
         ]
