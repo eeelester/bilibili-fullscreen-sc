@@ -1,5 +1,12 @@
 
 
+## [0.8.4](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.8.3...0.8.4) (2025-01-04)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* ws没有重连；ip属地个别页面显示不出来 ([24573e0](https://github.com/eeelester/bilibili-fullscreen-sc/commit/24573e0d2ce014dac1c15eabe0726351b11c5bda))
+
 ## [0.8.3](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.8.2...0.8.3) (2024-12-27)
 
 
