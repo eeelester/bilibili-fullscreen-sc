@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         哔哩哔哩网页版显示 IP 属地 B站 Bilibili IP 属地显示
 // @namespace    http://zhangmaimai.com
-// @version      1.6.5
+// @version      1.6.7
 // @author       MaxChang3
 // @description  我不喜欢 IP 属地，但是你手机都显示了，为什么电脑不显示呢？显示网页版 B 站 IP 属地，支持大部分场景的评论区
 // @license      MIT
@@ -15,6 +15,7 @@
 // @match        https://www.bilibili.com/v/topic/detail/*
 // @match        https://www.bilibili.com/cheese/play/*
 // @match        https://www.bilibili.com/festival/*
+// @match        https://www.bilibili.com/blackboard/*
 // @match        https://www.bilibili.com/blackroom/ban/*
 // @match        https://www.bilibili.com/read/*
 // @match        https://manga.bilibili.com/detail/*
@@ -28,7 +29,7 @@
 
   var __defProp = Object.defineProperty;
   var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-  var __publicField = (obj, key, value) => __defNormalProp(obj, key + "" , value);
+  var __publicField = (obj, key, value) => __defNormalProp(obj, key + "", value);
   var _unsafeWindow = /* @__PURE__ */ (() => typeof window != "undefined" ? window : void 0)();
   const isElementLoaded = async (selector, root = document) => {
     const getElement = () => root.querySelector(selector);
@@ -87,28 +88,31 @@
     }
   }
   const createPatch = (ActionButtonsRender) => {
-    class PatchActionButtonsRender extends ActionButtonsRender {
-      update() {
-        super.update();
-        const pubDateEl = this.shadowRoot.querySelector("#pubdate");
-        if (!pubDateEl) return;
-        let locationEl = this.shadowRoot.querySelector("#location");
-        const locationString = getLocationString(this.data);
-        if (!locationString) {
-          if (locationEl) locationEl.remove();
-          return;
-        }
-        if (locationEl) {
-          locationEl.textContent = locationString;
-          return;
-        }
-        locationEl = document.createElement("div");
-        locationEl.id = "location";
-        locationEl.textContent = locationString;
-        pubDateEl.insertAdjacentElement("afterend", locationEl);
+    const applyHandler = (target, thisArg, args) => {
+      const result = Reflect.apply(target, thisArg, args);
+      const pubDateEl = thisArg.shadowRoot.querySelector("#pubdate");
+      if (!pubDateEl) return result;
+      let locationEl = thisArg.shadowRoot.querySelector("#location");
+      const locationString = getLocationString(thisArg.data);
+      if (!locationString) {
+        if (locationEl) locationEl.remove();
+        return result;
       }
-    }
-    return PatchActionButtonsRender;
+      if (locationEl) {
+        locationEl.textContent = locationString;
+        return result;
+      }
+      locationEl = document.createElement("div");
+      locationEl.id = "location";
+      locationEl.textContent = locationString;
+      pubDateEl.insertAdjacentElement("afterend", locationEl);
+      return result;
+    };
+    ActionButtonsRender.prototype.update = new Proxy(
+      ActionButtonsRender.prototype.update,
+      { apply: applyHandler }
+    );
+    return ActionButtonsRender;
   };
   const hookLit = () => {
     const { define: originalDefine } = _unsafeWindow.customElements;
@@ -214,6 +218,11 @@
     "https://www.bilibili.com/cheese/play/"
   ], hookLit);
   router.serve(
+    /** 活动页 */
+    "https://www.bilibili.com/blackboard/",
+    observeAndInjectComments
+  );
+  router.serve(
     /** 拜年祭 */
     "https://www.bilibili.com/festival/",
     hookBBComment
@@ -246,8 +255,8 @@
   router.serve("https://www.bilibili.com/v/topic/detail/", () => serveNewComments(".list-view"));
   router.serve("https://space.bilibili.com/", async () => {
     const biliMainHeader = await isElementLoaded("#biliMainHeader");
-    const isFreshSpaceDynamic = (biliMainHeader == null ? void 0 : biliMainHeader.tagName) === "HEADER";
-    if (isFreshSpaceDynamic) {
+    const isFreshSpace = (biliMainHeader == null ? void 0 : biliMainHeader.tagName) === "HEADER";
+    if (isFreshSpace) {
       hookLit();
     } else {
       serveNewComments(".bili-dyn-list__items");
@@ -255,15 +264,15 @@
   }, { endsWith: "dynamic" });
   router.serve("https://space.bilibili.com/", async () => {
     const biliMainHeader = await isElementLoaded("#biliMainHeader");
-    const isFreshSpaceDynamic = (biliMainHeader == null ? void 0 : biliMainHeader.tagName) === "HEADER";
-    if (isFreshSpaceDynamic) {
-      const newDyanmicTab = await isElementLoaded(".nav-tab__item:nth-child(2)");
-      newDyanmicTab.addEventListener("click", () => {
+    const isFreshSpace = (biliMainHeader == null ? void 0 : biliMainHeader.tagName) === "HEADER";
+    if (isFreshSpace) {
+      const dyanmicTab = await isElementLoaded(".nav-tab__item:nth-child(2)");
+      dyanmicTab.addEventListener("click", () => {
         hookLit();
       }, { once: true });
     } else {
-      const oldDynamicTab = await isElementLoaded(".n-dynamic");
-      oldDynamicTab.addEventListener("click", () => {
+      const dynamicTab = await isElementLoaded(".n-dynamic");
+      dynamicTab.addEventListener("click", () => {
         serveNewComments(".bili-dyn-list__items");
       }, { once: true });
     }

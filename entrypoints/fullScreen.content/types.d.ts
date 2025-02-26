@@ -22,8 +22,8 @@ interface MessageList extends DanmuData {
 
 export interface RoomDetailInfo extends BilibiliResponseBasic {
   data: {
-    super_chat_info: {
-      message_list: MessageList[]
+    super_chat_message: {
+      list: MessageList[]
     }
   }
 }
