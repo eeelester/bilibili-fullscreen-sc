@@ -9,7 +9,7 @@
 
 打开Chrome浏览器
 
-- 输入 https://chromewebstore.google.com/ ，搜索：B 站 SC 助手
+- 输入 https://chromewebstore.google.com/ ，搜索：B站助手，全屏显示SC，评论显示IP属地
 - 添加到 Chrome 即可
 
 ---
