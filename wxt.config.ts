@@ -8,7 +8,7 @@ export default defineConfig({
   modules: ['@wxt-dev/module-react'],
   manifest: {
     name: 'B站助手，全屏显示SC，评论显示IP属地',
-    permissions: ['storage'],
+    permissions: ['storage', 'tabs'],
     icons: {
       16: './icons/icon-16.png',
       32: './icons/icon-32.png',

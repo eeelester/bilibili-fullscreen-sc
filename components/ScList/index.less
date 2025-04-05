@@ -1,5 +1,111 @@
 @sc-width: 270px;
 
+// 定义缩放比例变量
+@scale-max: 1.2;
+@scale-min: 0.8;
+@scale-normal: 1;
+
+// 创建缩放混合器
+.scale-element(@scale) {
+  .sc {
+    width: calc(@sc-width * @scale);
+    border-radius: 6px;
+    font-family: Arial, 'Microsoft YaHei', 'Microsoft Sans Serif',
+      'Microsoft SanSerf', '微软雅黑';
+    margin: 0 10px 4px 0;
+
+    font-size: calc(12px * @scale);
+
+
+    .top-container {
+      box-sizing: border-box;
+      padding: calc(8px * @scale) calc(10px * @scale);
+      height: calc(50px * @scale);
+      display: flex;
+      align-items: center;
+      border-radius: 6px 6px 0 0;
+      border-width: 1px;
+      border-style: solid;
+
+      .avatar-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .avatar {
+          width: calc(30px * @scale);
+          height: calc(30px * @scale);
+          border-radius: calc(17px * @scale);
+          background-size: cover;
+          background-position: center center;
+          background-repeat: no-repeat;
+        }
+
+        .frame {
+          width: calc(34px * @scale);
+          height: calc(34px * @scale);
+          position: absolute;
+          top: calc(-2px * @scale);
+          left: calc(-2px * @scale);
+        }
+      }
+
+      .top-right-container {
+        margin: calc(2px * @scale) 0 0 calc(6px * @scale);
+        display: flex;
+        flex-direction: column;
+        color: #333;
+        width: 100%;
+        flex: 1;
+
+        .name {
+          opacity: 0.78;
+        }
+
+        .price {
+          padding-top: calc(2px * @scale);
+        }
+      }
+
+      .close-btn {
+        align-self: center;
+        width: calc(16px * @scale);
+        cursor: pointer;
+        height: calc(16px * @scale);
+      }
+    }
+
+    .content {
+      border-radius: 2px 2px 6px 6px;
+      padding: calc(8px * @scale) calc(10px * @scale);
+      min-height: calc(38px * @scale);
+      line-height: calc(20px * @scale);
+      word-break: break-word;
+      color: #ffffff;
+    }
+  }
+
+  .progress-inner {
+    width: calc(@sc-width * @scale);
+    position: relative;
+    overflow: hidden;
+    vertical-align: middle;
+    border-radius: 100px;
+    background-color: #fff;
+    margin-bottom: calc(8px * @scale);
+
+    .progress-bg {
+      width: 100%;
+      height: calc(4px * @scale);
+      animation-name: clipAnimation;
+      animation-timing-function: linear;
+      animation-iteration-count: 1;
+      animation-fill-mode: forwards;
+    }
+  }
+}
+
 .container {
   .sc-list {
     display: flex;
@@ -11,82 +117,8 @@
     z-index: 999;
     overflow: auto;
 
-    .sc {
-      width: @sc-width;
-      border-radius: 6px;
-      font-family: Arial, 'Microsoft YaHei', 'Microsoft Sans Serif',
-        'Microsoft SanSerf', '微软雅黑';
-      margin: 0 10px 4px 0;
-
-      .top-container {
-        box-sizing: border-box;
-        padding: 8px 10px;
-        height: 50px;
-        display: flex;
-        align-items: center;
-        border-radius: 6px 6px 0 0;
-        border-width: 1px;
-        border-style: solid;
-
-        .avatar-container {
-          position: relative;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-
-          .avatar {
-            width: 30px;
-            height: 30px;
-            border-radius: 17px;
-            background-size: cover;
-            background-position: center center;
-            background-repeat: no-repeat;
-          }
-
-          .frame {
-            width: 34px;
-            height: 34px;
-            position: absolute;
-            top: -2px;
-            left: -2px;
-          }
-        }
-
-        .top-right-container {
-          margin: 2px 0 0 6px;
-          display: flex;
-          flex-direction: column;
-          color: #333;
-          width: 100%;
-          flex: 1;
-
-          .name {
-            opacity: 0.78;
-            font-size: 12px;
-          }
-
-          .price {
-            padding-top: 2px;
-          }
-        }
-
-        .close-btn {
-          align-self: center;
-          width: 16px;
-          cursor: pointer;
-          height: 16px;
-        }
-      }
-
-      .content {
-        border-radius: 2px 2px 6px 6px;
-        padding: 8px 10px;
-        min-height: 38px;
-        line-height: 20px;
-        word-break: break-word;
-        color: #ffffff;
-      }
-    }
+    // 应用默认缩放
+    .scale-element(@scale-normal);
 
     .sc-enter {
       opacity: 0;
@@ -106,32 +138,30 @@
       transition: opacity 500ms ease-in;
     }
 
-    .progress-inner {
-      width: @sc-width;
-      position: relative;
-      overflow: hidden;
-      vertical-align: middle;
-      border-radius: 100px;
-      background-color: #fff;
-      margin-bottom: 8px;
-
-      .progress-bg {
-        width: 100%;
-        height: 4px;
-        animation-name: clipAnimation;
-        animation-timing-function: linear;
-        animation-iteration-count: 1;
-        animation-fill-mode: forwards;
+    @keyframes clipAnimation {
+      0% {
+        clip-path: inset(0px 0 0px 0px round 100px);
       }
 
-      @keyframes clipAnimation {
-        0% {
-          clip-path: inset(0px 0 0px 0px round 100px);
-        }
+      100% {
+        clip-path: inset(0px 100% 0px 0px round 100px);
+      }
+    }
+  }
 
-        100% {
-          clip-path: inset(0px 100% 0px 0px round 100px);
-        }
+  // 应用缩放混合器
+  &.max {
+    .sc-list {
+      .scale-element(@scale-max);
+    }
+  }
+
+  &.min {
+    .sc-list {
+      .scale-element(@scale-min);
+
+      .sc {
+        font-size: 11px !important;
       }
     }
   }

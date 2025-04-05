@@ -1,15 +1,16 @@
-import { createRef, useCallback, useEffect, useRef, useState } from 'react'
+import { createRef, useCallback, useEffect, useRef, useState, useLayoutEffect } from 'react'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { useMove, useRAF } from './hook'
 import type { SCListProps, ScInfo } from './type'
 import { eventBus } from '@/utils/event'
-import { WS_SC_EVENT } from '@/constant'
+import { sizeEnum, WS_SC_EVENT, DEFAULT_SIZE, SIZE_EVENT } from '@/constant'
 import closeIcon from '~/assets/close.svg'
 import './index.less'
 
 function SCList(props: SCListProps) {
   const { scDocument } = props
   const [scList, setScList] = useState<ScInfo[]>([])
+  const [size, setSize] = useState<sizeEnum>(DEFAULT_SIZE)
   const scListRef = useRef<HTMLDivElement>(null)
   const { left, bottom, maxHeight } = useMove(scListRef, scDocument)
   useRAF(setScList)
@@ -23,13 +24,29 @@ function SCList(props: SCListProps) {
     setScList(prev => prev.concat({ ...scInfo, nodeRef: createRef(), addedTime: Date.now() }))
   }, [])
 
+  useLayoutEffect(() => {
+    (async () => {
+      try {
+        const savedSize = await storage.getItem('local:UISize')
+        if (savedSize && Object.values(sizeEnum).includes(savedSize as sizeEnum)) {
+          setSize(savedSize as sizeEnum)
+        }
+      } catch (error) {
+        console.error('获取UI尺寸失败:', error)
+      }
+    })()
+  }, [])
+
+
   useEffect(() => {
     eventBus.subscribe(WS_SC_EVENT, Listener)
+    eventBus.subscribe(SIZE_EVENT, setSize)
 
     return () => {
       eventBus.unsubscribe(WS_SC_EVENT, Listener)
+      eventBus.unsubscribe(SIZE_EVENT, setSize)
     }
-  }, [Listener])
+  }, [Listener, setSize])
 
   const handleDelete = (e: React.MouseEvent<HTMLImageElement, MouseEvent>, id: number) => {
     e.stopPropagation()
@@ -39,7 +56,7 @@ function SCList(props: SCListProps) {
   }
 
   return (
-    <div className="container" ref={scListRef}>
+    <div className={`container ${size}`} ref={scListRef}>
       <TransitionGroup
         className="sc-list"
         style={{

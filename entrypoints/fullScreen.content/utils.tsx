@@ -39,8 +39,7 @@ export function mount(log: string) {
   root.render(<SCList scDocument={isInIframe ? (getVideoDomFromIframe().contentDocument as Document) : document} />)
 
   // setTimeout(() => {
-  //   processData({ ...testData, data: { ...testData.data, time: 10, delay: 5 } });
-
+  //   processData({ ...testData, data: { ...testData.data, time: 1000, delay: 5 } });
   // }, 1000);
   void getInfo()
 }
@@ -97,12 +96,7 @@ async function getInfo() {
   })
     .then(response => response.json())
     .then((res: RoomDetailInfo) => {
-      const {
-        data: {
-          super_chat_info: { message_list },
-        },
-      } = res
-      return message_list
+      return res?.data?.super_chat_info?.message_list || [];
     })
   if (Array.isArray(existingSCList) && existingSCList.length) {
     console.log('existingSCList', existingSCList)

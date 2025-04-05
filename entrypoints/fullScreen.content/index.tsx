@@ -1,4 +1,6 @@
 import { existElement, mount, unmount } from './utils'
+import { sizeEnum } from '@/constant'
+import { processSize } from '@/utils'
 import ObservePageFullScreen from './observePageFullScreen'
 
 export default defineContentScript({
@@ -21,5 +23,10 @@ export default defineContentScript({
 
     // 监听网页全屏模式
     ObservePageFullScreen()
+
+    browser.runtime.onMessage.addListener((request: unknown) => {
+      const typeSize = request as { size: sizeEnum }
+      processSize(typeSize.size)
+    })
   },
 })

@@ -1,5 +1,5 @@
 import { eventBus } from '@/utils/event'
-import { WS_SC_EVENT } from '@/constant'
+import { WS_SC_EVENT, sizeEnum, SIZE_EVENT } from '@/constant'
 
 export interface DanmuDataProps {
   data: {
@@ -61,4 +61,8 @@ function processData(res: DanmuDataProps) {
   })
 }
 
-export { processData }
+function processSize(size: sizeEnum) {
+  eventBus.emit(SIZE_EVENT, size)
+}
+
+export { processData, processSize }
