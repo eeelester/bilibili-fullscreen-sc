@@ -1,5 +1,23 @@
 
 
+## [0.8.5](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.8.4...0.8.5) (2025-04-05)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* 同步接口修改；更新ip sdk ([171f725](https://github.com/eeelester/bilibili-fullscreen-sc/commit/171f725d00c92790be2c56e28bad055dc0afc683))
+* 接口数据异常；cd异常 ([135608d](https://github.com/eeelester/bilibili-fullscreen-sc/commit/135608d27dfc334289ff1dcb84eea27813ed29ee))
+
+
+### 📝 Documentation | 文档
+
+* Update README.md ([6e1a60b](https://github.com/eeelester/bilibili-fullscreen-sc/commit/6e1a60b9cd3aad934193a095ee454142f8cf5141))
+
+
+### 🔧 Continuous Integration | CI 配置
+
+* update ([4384ede](https://github.com/eeelester/bilibili-fullscreen-sc/commit/4384ede7343cd8ba671ea50138251e8e3d88a671))
+
 ## [0.8.4](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.8.3...0.8.4) (2025-01-04)
 
 
