@@ -39,5 +39,8 @@ jobs:
           node-version: 20
           cache: pnpm
 
+      - name: Install ESLint globally
+        run: pnpm add -g eslint@^8
+
       - name: Lint
         run: pnpm lint
