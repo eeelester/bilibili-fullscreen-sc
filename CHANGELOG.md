@@ -1,5 +1,17 @@
 
 
+## [0.8.6](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.8.5...0.8.6) (2025-04-05)
+
+
+### ✨ Features | 新功能
+
+* 支持大小调节 ([7702063](https://github.com/eeelester/bilibili-fullscreen-sc/commit/7702063ddbbb65e909901f6a350bc0848b0e6738))
+
+
+### 💄 Styles | 风格
+
+* eslint扫一遍 ([d2ec3cb](https://github.com/eeelester/bilibili-fullscreen-sc/commit/d2ec3cb0e2c1ff195dcd1e9e3d542a07536333bb))
+
 ## [0.8.5](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.8.4...0.8.5) (2025-04-05)
 
 
