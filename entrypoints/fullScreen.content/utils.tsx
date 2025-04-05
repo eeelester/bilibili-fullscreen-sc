@@ -92,17 +92,17 @@ async function getInfo() {
       return room_id
     })
 
-  const existingSCList = await fetch(`https://api.live.bilibili.com/xlive/web-room/v1/index/getInfoByUser?room_id=${roomId}`, {
+  const existingSCList = await fetch(`https://api.live.bilibili.com/xlive/web-room/v1/index/getInfoByRoom?room_id=${roomId}`, {
     credentials: 'include',
   })
     .then(response => response.json())
     .then((res: RoomDetailInfo) => {
       const {
         data: {
-          super_chat_message: { list },
+          super_chat_info: { message_list },
         },
       } = res
-      return list
+      return message_list
     })
   if (Array.isArray(existingSCList) && existingSCList.length) {
     console.log('existingSCList', existingSCList)
