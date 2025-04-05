@@ -1,7 +1,7 @@
 import { existElement, mount, unmount } from './utils'
-import { sizeEnum } from '@/constant'
-import { processSize } from '@/utils'
 import ObservePageFullScreen from './observePageFullScreen'
+import type { sizeEnum } from '@/constant'
+import { processSize } from '@/utils'
 
 export default defineContentScript({
   matches: ['https://live.bilibili.com/*'],

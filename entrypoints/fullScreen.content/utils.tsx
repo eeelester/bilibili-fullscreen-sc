@@ -96,7 +96,7 @@ async function getInfo() {
   })
     .then(response => response.json())
     .then((res: RoomDetailInfo) => {
-      return res?.data?.super_chat_info?.message_list || [];
+      return res?.data?.super_chat_info?.message_list || []
     })
   if (Array.isArray(existingSCList) && existingSCList.length) {
     console.log('existingSCList', existingSCList)

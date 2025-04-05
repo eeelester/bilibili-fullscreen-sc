@@ -1,9 +1,9 @@
-import { createRef, useCallback, useEffect, useRef, useState, useLayoutEffect } from 'react'
+import { createRef, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { useMove, useRAF } from './hook'
 import type { SCListProps, ScInfo } from './type'
 import { eventBus } from '@/utils/event'
-import { sizeEnum, WS_SC_EVENT, DEFAULT_SIZE, SIZE_EVENT } from '@/constant'
+import { DEFAULT_SIZE, SIZE_EVENT, WS_SC_EVENT, sizeEnum } from '@/constant'
 import closeIcon from '~/assets/close.svg'
 import './index.less'
 
@@ -25,18 +25,17 @@ function SCList(props: SCListProps) {
   }, [])
 
   useLayoutEffect(() => {
-    (async () => {
+    void (async () => {
       try {
         const savedSize = await storage.getItem('local:UISize')
-        if (savedSize && Object.values(sizeEnum).includes(savedSize as sizeEnum)) {
+        if (savedSize && Object.values(sizeEnum).includes(savedSize as sizeEnum))
           setSize(savedSize as sizeEnum)
-        }
-      } catch (error) {
+      }
+      catch (error) {
         console.error('获取UI尺寸失败:', error)
       }
     })()
   }, [])
-
 
   useEffect(() => {
     eventBus.subscribe(WS_SC_EVENT, Listener)
