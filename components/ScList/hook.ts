@@ -4,8 +4,6 @@ import { PositionEnum } from '@/constant'
 
 type propRef = React.MutableRefObject<HTMLDivElement | undefined | null>
 
-
-
 function useMove(ref: propRef, scDocument: Document, initialPosition: PositionEnum = PositionEnum.BOTTOM_LEFT) {
   const height = useMemo(() => scDocument.documentElement.clientHeight, [])
   // 根据初始位置设置初始坐标
@@ -39,21 +37,24 @@ function useMove(ref: propRef, scDocument: Document, initialPosition: PositionEn
       const dx = e.clientX - lastX
       const dy = e.clientY - lastY
 
-      setPosition(prev => {
+      setPosition((prev) => {
         const newPos = { ...prev }
 
         // 根据当前位置属性更新坐标
-        if ('left' in prev) newPos.left = (prev.left as number) + dx
-        if ('right' in prev) newPos.right = (prev.right as number) - dx
-        if ('top' in prev) newPos.top = (prev.top as number) + dy
-        if ('bottom' in prev) newPos.bottom = (prev.bottom as number) - dy
+        if ('left' in prev)
+          newPos.left = (prev.left as number) + dx
+        if ('right' in prev)
+          newPos.right = (prev.right as number) - dx
+        if ('top' in prev)
+          newPos.top = (prev.top as number) + dy
+        if ('bottom' in prev)
+          newPos.bottom = (prev.bottom as number) - dy
 
         // 更新最大高度
-        if ('top' in prev) {
+        if ('top' in prev)
           newPos.maxHeight = height - ((prev.top as number) + dy) - 30
-        } else if ('bottom' in prev) {
-          newPos.maxHeight = height - ((prev.bottom as number) - dy) - 30
-        }
+        else if ('bottom' in prev)
+          newPos.maxHeight = height - ((prev.bottom) - dy) - 30
 
         return newPos
       })

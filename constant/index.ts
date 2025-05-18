@@ -9,7 +9,6 @@ enum sizeEnum {
 
 const DEFAULT_SIZE = sizeEnum.medium
 
-
 // 定义位置事件名称
 const POSITION_EVENT = 'position-change'
 

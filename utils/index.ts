@@ -1,6 +1,6 @@
 import { eventBus } from '@/utils/event'
-import type { sizeEnum } from '@/constant'
-import { SIZE_EVENT, WS_SC_EVENT, POSITION_EVENT, PositionEnum } from '@/constant'
+import type { PositionEnum, sizeEnum } from '@/constant'
+import { POSITION_EVENT, SIZE_EVENT, WS_SC_EVENT } from '@/constant'
 
 export interface DanmuDataProps {
   data: {

@@ -1,7 +1,7 @@
+import { useEffect, useState } from 'react'
 import RadioGroup from '@/components/RadioGroup'
 import SCList from '@/components/ScList'
 import { processData, processSize } from '@/utils'
-import { useEffect, useState } from 'react'
 import { PositionEnum } from '@/constant'
 
 import { testData } from '@/dev/testData'
@@ -29,9 +29,8 @@ function App() {
     void (async () => {
       try {
         const savedPosition = await storage.getItem('local:UIPosition')
-        if (savedPosition && Object.values(PositionEnum).includes(savedPosition as PositionEnum)) {
+        if (savedPosition && Object.values(PositionEnum).includes(savedPosition as PositionEnum))
           setPosition(savedPosition as PositionEnum)
-        }
       }
       catch (error) {
         console.error('获取位置设置失败:', error)

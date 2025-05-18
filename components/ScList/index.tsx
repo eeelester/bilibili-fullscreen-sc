@@ -3,11 +3,10 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { useMove, useRAF } from './hook'
 import type { SCListProps, ScInfo } from './type'
 import { eventBus } from '@/utils/event'
-import { DEFAULT_SIZE, SIZE_EVENT, WS_SC_EVENT, sizeEnum } from '@/constant'
+import { DEFAULT_SIZE, POSITION_EVENT, PositionEnum, SIZE_EVENT, WS_SC_EVENT, sizeEnum } from '@/constant'
 import closeIcon from '~/assets/close.svg'
-import { PositionEnum, POSITION_EVENT } from '@/constant'
-import './index.less'
 
+import './index.less'
 
 function SCList(props: SCListProps) {
   const { scDocument } = props
