@@ -59,7 +59,7 @@
     "wxt": "^0.19.29"
   },
   "lint-staged": {
-    "src/*.{js,jsx,tsx,ts}": [
+    "{components,entrypoints,utils,constant}/**/*.{js,jsx,tsx,ts}": [
       "pnpm lint"
     ]
   }
