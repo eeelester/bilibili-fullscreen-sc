@@ -5,14 +5,17 @@ import type { SCListProps, ScInfo } from './type'
 import { eventBus } from '@/utils/event'
 import { DEFAULT_SIZE, SIZE_EVENT, WS_SC_EVENT, sizeEnum } from '@/constant'
 import closeIcon from '~/assets/close.svg'
+import { PositionEnum, POSITION_EVENT } from '@/constant'
 import './index.less'
+
 
 function SCList(props: SCListProps) {
   const { scDocument } = props
   const [scList, setScList] = useState<ScInfo[]>([])
   const [size, setSize] = useState<sizeEnum>(DEFAULT_SIZE)
+  const [position, setPosition] = useState<PositionEnum>(PositionEnum.BOTTOM_LEFT)
   const scListRef = useRef<HTMLDivElement>(null)
-  const { left, bottom, maxHeight } = useMove(scListRef, scDocument)
+  const positionProps = useMove(scListRef, scDocument, position)
   useRAF(setScList)
 
   const Listener = useCallback((scInfo: ScInfo) => {
@@ -30,9 +33,14 @@ function SCList(props: SCListProps) {
         const savedSize = await storage.getItem('local:UISize')
         if (savedSize && Object.values(sizeEnum).includes(savedSize as sizeEnum))
           setSize(savedSize as sizeEnum)
+
+        // 获取保存的位置设置
+        const savedPosition = await storage.getItem('local:UIPosition')
+        if (savedPosition && Object.values(PositionEnum).includes(savedPosition as PositionEnum))
+          setPosition(savedPosition as PositionEnum)
       }
       catch (error) {
-        console.error('获取UI尺寸失败:', error)
+        console.error('获取UI设置失败:', error)
       }
     })()
   }, [])
@@ -40,10 +48,13 @@ function SCList(props: SCListProps) {
   useEffect(() => {
     eventBus.subscribe(WS_SC_EVENT, Listener)
     eventBus.subscribe(SIZE_EVENT, setSize)
+    // 订阅位置变更事件
+    eventBus.subscribe(POSITION_EVENT, setPosition)
 
     return () => {
       eventBus.unsubscribe(WS_SC_EVENT, Listener)
       eventBus.unsubscribe(SIZE_EVENT, setSize)
+      eventBus.unsubscribe(POSITION_EVENT, setPosition)
     }
   }, [Listener, setSize])
 
@@ -59,9 +70,7 @@ function SCList(props: SCListProps) {
       <TransitionGroup
         className="sc-list"
         style={{
-          left: `${left}px`,
-          bottom: `${bottom}px`,
-          maxHeight: `${maxHeight}px`,
+          ...positionProps,
         }}
       >
         {scList.map(

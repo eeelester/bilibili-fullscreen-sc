@@ -1,13 +1,35 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { ScInfo } from './type'
+import { PositionEnum } from '@/constant'
 
 type propRef = React.MutableRefObject<HTMLDivElement | undefined | null>
 
-function useMove(ref: propRef, scDocument: Document) {
+
+
+function useMove(ref: propRef, scDocument: Document, initialPosition: PositionEnum = PositionEnum.BOTTOM_LEFT) {
   const height = useMemo(() => scDocument.documentElement.clientHeight, [])
-  const [position, setPosition] = useState({ left: 10, bottom: 140, maxHeight: height - 30 })
+  // 根据初始位置设置初始坐标
+  const getInitialPosition = useCallback(() => {
+    switch (initialPosition) {
+      case PositionEnum.TOP_LEFT:
+        return { left: 10, top: 10, maxHeight: height - 30 }
+      case PositionEnum.TOP_RIGHT:
+        return { right: 10, top: 10, maxHeight: height - 30 }
+      case PositionEnum.BOTTOM_RIGHT:
+        return { right: 10, bottom: 140, maxHeight: height - 30 }
+      case PositionEnum.BOTTOM_LEFT:
+      default:
+        return { left: 10, bottom: 140, maxHeight: height - 30 }
+    }
+  }, [height, initialPosition])
+
+  const [position, setPosition] = useState(getInitialPosition())
   const movingRef = useRef(false)
   const lastPositionRef = useRef<{ lastX: number | null, lastY: number | null }>({ lastX: 0, lastY: 0 })
+
+  useEffect(() => {
+    setPosition(getInitialPosition())
+  }, [getInitialPosition])
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!movingRef.current)
@@ -16,11 +38,25 @@ function useMove(ref: propRef, scDocument: Document) {
     if (lastX && lastY) {
       const dx = e.clientX - lastX
       const dy = e.clientY - lastY
-      setPosition(prev => ({
-        left: prev.left + dx,
-        bottom: prev.bottom - dy,
-        maxHeight: height - (prev.bottom + dy),
-      }))
+
+      setPosition(prev => {
+        const newPos = { ...prev }
+
+        // 根据当前位置属性更新坐标
+        if ('left' in prev) newPos.left = (prev.left as number) + dx
+        if ('right' in prev) newPos.right = (prev.right as number) - dx
+        if ('top' in prev) newPos.top = (prev.top as number) + dy
+        if ('bottom' in prev) newPos.bottom = (prev.bottom as number) - dy
+
+        // 更新最大高度
+        if ('top' in prev) {
+          newPos.maxHeight = height - ((prev.top as number) + dy) - 30
+        } else if ('bottom' in prev) {
+          newPos.maxHeight = height - ((prev.bottom as number) - dy) - 30
+        }
+
+        return newPos
+      })
     }
     lastPositionRef.current = {
       lastX: e.clientX,

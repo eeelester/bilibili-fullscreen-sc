@@ -1,6 +1,6 @@
 import { eventBus } from '@/utils/event'
 import type { sizeEnum } from '@/constant'
-import { SIZE_EVENT, WS_SC_EVENT } from '@/constant'
+import { SIZE_EVENT, WS_SC_EVENT, POSITION_EVENT, PositionEnum } from '@/constant'
 
 export interface DanmuDataProps {
   data: {
@@ -66,4 +66,8 @@ function processSize(size: sizeEnum) {
   eventBus.emit(SIZE_EVENT, size)
 }
 
-export { processData, processSize }
+function processPosition(position: PositionEnum) {
+  eventBus.emit(POSITION_EVENT, position)
+}
+
+export { processData, processSize, processPosition }

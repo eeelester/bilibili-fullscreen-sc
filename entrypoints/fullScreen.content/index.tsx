@@ -1,7 +1,6 @@
 import { existElement, mount, unmount } from './utils'
 import ObservePageFullScreen from './observePageFullScreen'
-import type { sizeEnum } from '@/constant'
-import { processSize } from '@/utils'
+import { processSize, processPosition } from '@/utils'
 
 export default defineContentScript({
   matches: ['https://live.bilibili.com/*'],
@@ -24,9 +23,13 @@ export default defineContentScript({
     // 监听网页全屏模式
     ObservePageFullScreen()
 
-    browser.runtime.onMessage.addListener((request: unknown) => {
-      const typeSize = request as { size: sizeEnum }
-      processSize(typeSize.size)
+    browser.runtime.onMessage.addListener((message) => {
+      if (message.size) {
+        processSize(message.size)
+      }
+      if (message.position) {
+        processPosition(message.position)
+      }
     })
   },
 })
