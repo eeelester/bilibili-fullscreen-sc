@@ -1,5 +1,13 @@
 
 
+## [0.9.1](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.9.0...0.9.1) (2025-05-31)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* 提交商店审核显示icons路径异常 ([5058600](https://github.com/eeelester/bilibili-fullscreen-sc/commit/5058600271253d552ced080a455196d778b88f7c))
+* 风控导致参数获取异常 ([9063896](https://github.com/eeelester/bilibili-fullscreen-sc/commit/9063896598721ef6c1c814c10e6a2a88e1b1289f))
+
 ## [0.9.0](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.8.6...0.9.0) (2025-05-18)
 
 
