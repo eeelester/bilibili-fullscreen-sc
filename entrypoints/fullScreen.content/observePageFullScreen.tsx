@@ -24,7 +24,6 @@ function listenVideoSizeChange(video: HTMLVideoElement) {
   let lastTimePageFullScreen = false
   resizeObserver = new ResizeObserver((entries) => {
     for (const entry of entries) {
-      console.log('resizeObserver', entry)
       if (entry.contentRect) {
         const videoWidth = entry.contentRect?.width
         if (videoWidth === window.innerWidth) {

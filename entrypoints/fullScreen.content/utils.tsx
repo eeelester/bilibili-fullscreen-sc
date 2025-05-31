@@ -3,6 +3,7 @@ import type { Root } from 'react-dom/client'
 import { KeepLiveWS } from 'bilibili-live-ws'
 import { ALREADY_HAVE_IT } from './const'
 import type { DanmuInfo, RoomDetailInfo, RoomInfo } from './types'
+import { wbi } from './wbi'
 import SCList from '@/components/ScList'
 import type { DanmuDataProps } from '@/utils'
 import { processData } from '@/utils'
@@ -106,15 +107,21 @@ async function getInfo() {
       processData({ data: { ...i, time, delay } })
     }
   }
-  const key = await fetch(`https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=${roomId}`)
+  const paramsWithWbi = await wbi({
+    id: roomId,
+  })
+  const key = await fetch(`https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?${paramsWithWbi}`)
     .then(response => response.json())
     .then((res: DanmuInfo) => {
       const { data: { token } = { token: '' } } = res
       return token
     })
+
+  console.log('token', key)
+
   keepLiveWS = new KeepLiveWS(roomId, {
     protover: 3,
-    key,
+    key: String(key),
   })
   keepLiveWS.on('SUPER_CHAT_MESSAGE', (res: DanmuDataProps) => {
     console.log('SC', res)

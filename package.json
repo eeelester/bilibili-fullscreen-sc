@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "bilibili-live-ws": "^6.3.1",
+    "md5": "^2.3.0",
     "rc-switch": "^4.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -44,6 +45,7 @@
     "@testing-library/jest-dom": "5.16.4",
     "@types/eslint__eslintrc": "^2.1.1",
     "@types/jest": "^29.5.11",
+    "@types/md5": "^2.3.5",
     "@types/rc-switch": "^1.9.5",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
