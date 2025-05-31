@@ -9,11 +9,12 @@ export default defineConfig({
   manifest: {
     name: 'B站助手，全屏显示SC，评论显示IP属地',
     permissions: ['storage', 'tabs'],
+    host_permissions: ['*://*.bilibili.com/*'],
     icons: {
       16: 'icons/icon-16.png',
       32: 'icons/icon-32.png',
       48: 'icons/icon-48.png',
-    },
+    }
   },
   runner: {
     startUrls: ['https://live.bilibili.com/7777'],
