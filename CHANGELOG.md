@@ -1,5 +1,12 @@
 
 
+## [0.9.2](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.9.1...0.9.2) (2025-05-31)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* 请求带cookie要增加permission ([fbe3ea7](https://github.com/eeelester/bilibili-fullscreen-sc/commit/fbe3ea743334cf1e1aef8200dced98f409c73c7c))
+
 ## [0.9.1](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.9.0...0.9.1) (2025-05-31)
 
 
