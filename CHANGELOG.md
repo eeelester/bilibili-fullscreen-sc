@@ -1,5 +1,18 @@
 
 
+## [0.9.0](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.8.6...0.9.0) (2025-05-18)
+
+
+### ✨ Features | 新功能
+
+* 增加sc列表可选初始位置 ([4f8d428](https://github.com/eeelester/bilibili-fullscreen-sc/commit/4f8d428c2a803cfc3238fa140a9640d6dbe3e81f))
+
+
+### 💄 Styles | 风格
+
+* lint ([dc1a90c](https://github.com/eeelester/bilibili-fullscreen-sc/commit/dc1a90c80c1a91b5bd97b26096975a5d20df396d))
+* lint ([70a151f](https://github.com/eeelester/bilibili-fullscreen-sc/commit/70a151f6fc21d93ed91183c031fd4c0ce21a16d7))
+
 ## [0.8.6](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.8.5...0.8.6) (2025-04-05)
 
 
