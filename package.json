@@ -58,11 +58,11 @@
     "release-it": "^17.2.1",
     "ts-jest": "^29.1.1",
     "typescript": "^5.3.3",
-    "wxt": "^0.19.29"
+    "wxt": "^0.20.7"
   },
   "lint-staged": {
     "{components,entrypoints,utils,constant}/**/*.{js,jsx,tsx,ts}": [
-      "pnpm lint"
+      "eslint --fix"
     ]
   }
 }

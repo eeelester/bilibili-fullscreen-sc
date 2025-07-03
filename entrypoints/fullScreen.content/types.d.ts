@@ -34,4 +34,10 @@ export interface DanmuInfo extends BilibiliResponseBasic {
   }
 }
 
+export interface personInfo extends BilibiliResponseBasic {
+  data: {
+    mid: number
+  }
+}
+
 export type Status = 'active' | 'inactive' | 'pending'

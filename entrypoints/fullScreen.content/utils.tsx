@@ -2,7 +2,7 @@ import { createRoot } from 'react-dom/client'
 import type { Root } from 'react-dom/client'
 import { KeepLiveWS } from 'bilibili-live-ws'
 import { ALREADY_HAVE_IT } from './const'
-import type { DanmuInfo, RoomDetailInfo, RoomInfo } from './types'
+import type { DanmuInfo, RoomDetailInfo, RoomInfo, personInfo } from './types'
 import { wbi } from './wbi'
 import SCList from '@/components/ScList'
 import type { DanmuDataProps } from '@/utils'
@@ -110,7 +110,9 @@ async function getInfo() {
   const paramsWithWbi = await wbi({
     id: roomId,
   })
-  const key = await fetch(`https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?${paramsWithWbi}`)
+  const key = await fetch(`https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?${paramsWithWbi}`, {
+    credentials: 'include'
+  })
     .then(response => response.json())
     .then((res: DanmuInfo) => {
       const { data: { token } = { token: '' } } = res
@@ -118,10 +120,19 @@ async function getInfo() {
     })
 
   console.log('token', key)
-
+  const mid = await fetch(`https://api.bilibili.com/x/member/web/account`, {
+    credentials: 'include'
+  })
+    .then(response => response.json())
+    .then((res: personInfo) => {
+      const { data: { mid } = { mid: 0 } } = res
+      return mid
+    })
+  console.log('mid', mid)
   keepLiveWS = new KeepLiveWS(roomId, {
     protover: 3,
     key: String(key),
+    uid: mid,
   })
   keepLiveWS.on('SUPER_CHAT_MESSAGE', (res: DanmuDataProps) => {
     console.log('SC', res)
