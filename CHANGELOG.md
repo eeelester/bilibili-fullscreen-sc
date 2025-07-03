@@ -1,5 +1,12 @@
 
 
+## [0.9.3](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.9.2...0.9.3) (2025-07-03)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* 修改获取弹幕接口传参以修复建立ws错误的问题 ([edc0db4](https://github.com/eeelester/bilibili-fullscreen-sc/commit/edc0db401d6b8797435086d1b473c16825c8dec8))
+
 ## [0.9.2](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.9.1...0.9.2) (2025-05-31)
 
 
