@@ -2,15 +2,21 @@ import { existElement, mount, unmount } from './utils'
 import ObservePageFullScreen from './observePageFullScreen'
 import { processPosition, processSize } from '@/utils'
 import type { PositionEnum, sizeEnum } from '@/constant'
+import { initWebSocketInterceptor } from './websocketInterceptor'
 
 interface BrowserMessage {
   size?: sizeEnum
   position?: PositionEnum
 }
 
+
+
+
 export default defineContentScript({
   matches: ['https://live.bilibili.com/*'],
+  runAt: 'document_start',
   main() {
+    initWebSocketInterceptor();
     // 监听全屏模式
     document.addEventListener(
       'fullscreenchange',

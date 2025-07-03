@@ -31,7 +31,9 @@
   },
   "dependencies": {
     "bilibili-live-ws": "^6.3.1",
+    "buffer": "^6.0.3",
     "md5": "^2.3.0",
+    "pako": "^2.1.0",
     "rc-switch": "^4.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -46,6 +48,7 @@
     "@types/eslint__eslintrc": "^2.1.1",
     "@types/jest": "^29.5.11",
     "@types/md5": "^2.3.5",
+    "@types/pako": "^2.0.3",
     "@types/rc-switch": "^1.9.5",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
@@ -58,7 +61,7 @@
     "release-it": "^17.2.1",
     "ts-jest": "^29.1.1",
     "typescript": "^5.3.3",
-    "wxt": "^0.19.29"
+    "wxt": "^0.20.7"
   },
   "lint-staged": {
     "{components,entrypoints,utils,constant}/**/*.{js,jsx,tsx,ts}": [

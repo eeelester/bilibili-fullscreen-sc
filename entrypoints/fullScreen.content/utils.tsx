@@ -42,7 +42,7 @@ export function mount(log: string) {
   // setTimeout(() => {
   //   processData({ ...testData, data: { ...testData.data, time: 1000, delay: 5 } });
   // }, 1000);
-  void getInfo()
+  // void getInfo()
 }
 
 export function unmount(log: string) {
