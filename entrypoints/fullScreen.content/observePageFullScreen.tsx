@@ -26,7 +26,7 @@ function listenVideoSizeChange(video: HTMLVideoElement) {
     for (const entry of entries) {
       if (entry.contentRect) {
         const videoWidth = entry.contentRect?.width
-        if (videoWidth === window.innerWidth) {
+        if (Math.abs(videoWidth - window.innerWidth) < 2) {
           // 虽然宽度相同，但是有可能窗口resize也会进来，所以为了防止重复mount
           if (!lastTimePageFullScreen) {
             // 全屏模式下跳另一种全屏，要做校验是否已经处于全屏模式
@@ -34,7 +34,7 @@ function listenVideoSizeChange(video: HTMLVideoElement) {
               lastTimePageFullScreen = true
           }
         }
-        else if (lastTimePageFullScreen && videoWidth) {
+        else if (lastTimePageFullScreen && videoWidth && Math.abs(videoWidth - window.innerWidth) >= 2) {
           unmount('------退出了网页全屏模式------')
           lastTimePageFullScreen = false
         }
