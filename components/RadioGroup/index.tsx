@@ -1,4 +1,4 @@
-import { useLayoutEffect } from 'react'
+import { useCallback, useLayoutEffect, useState } from 'react'
 import { DEFAULT_SIZE, sizeEnum } from '@/constant'
 import './index.less'
 
@@ -16,15 +16,15 @@ export default function RadioGroup(props: RadioGroupProps) {
     { label: '小', value: sizeEnum.min },
   ]
 
-  const handleChange = (value: sizeEnum) => {
+  const handleChange = useCallback((value: sizeEnum) => {
     setSize(value)
     onChange(value)
-  }
+  }, [onChange])
 
   useLayoutEffect(() => {
     void (async () => {
       const savedSize: sizeEnum | null | undefined = await storage.getItem('local:UISize')
-      handleChange(savedSize || DEFAULT_SIZE)
+      setSize(savedSize && Object.values(sizeEnum).includes(savedSize) ? savedSize : DEFAULT_SIZE)
     })()
   }, [])
 

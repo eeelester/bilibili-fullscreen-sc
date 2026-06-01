@@ -16,7 +16,7 @@ export default defineConfig({
       48: 'icons/icon-48.png',
     }
   },
-  runner: {
+  webExt: {
     startUrls: ['https://live.bilibili.com/7777'],
   },
   hooks: {

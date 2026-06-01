@@ -13,10 +13,15 @@ import { processData } from '@/utils'
 let isFirst = true
 let isMount = false
 let isInIframe = false
+let mountId = 0
 let root: Root | null
 let keepLiveWS: KeepLiveWS | null
 
-export let existElement: HTMLElement | null
+let existElement: HTMLElement | null
+
+export function hasMountElement() {
+  return Boolean(existElement)
+}
 
 export function mount(log: string) {
   if (isMount)
@@ -32,6 +37,7 @@ export function mount(log: string) {
   }
 
   existElement = document.createElement('div')
+  const currentMountId = ++mountId
 
   const videoDom = getVideoDom()
   console.log('videoParent', videoDom?.parentNode)
@@ -42,13 +48,14 @@ export function mount(log: string) {
   // setTimeout(() => {
   //   processData({ ...testData, data: { ...testData.data, time: 1000, delay: 5 } });
   // }, 1000);
-  void getInfo()
+  void getInfo(currentMountId)
 }
 
 export function unmount(log: string) {
   if (!isMount)
     return
   isMount = false
+  mountId += 1
 
   console.log(log)
   root?.unmount()
@@ -83,61 +90,77 @@ function injectIframeCss() {
   }
 }
 
-async function getInfo() {
-  const shortId = location.pathname.slice(1)
-  const roomId = await fetch(`https://api.live.bilibili.com/room/v1/Room/get_info?room_id=${shortId}`)
-    .then(response => response.json())
-    .then((res: RoomInfo) => {
-      const { data: { room_id } = { room_id: 0 } } = res
-      return room_id
-    })
+async function getInfo(currentMountId: number) {
+  try {
+    const shortId = location.pathname.slice(1)
+    const roomInfo = await fetchJson<RoomInfo>(`https://api.live.bilibili.com/room/v1/Room/get_info?room_id=${shortId}`)
+    const roomId = roomInfo?.data?.room_id || 0
+    if (!roomId || !isCurrentMount(currentMountId))
+      return
 
-  const existingSCList = await fetch(`https://api.live.bilibili.com/xlive/web-room/v1/index/getInfoByRoom?room_id=${roomId}`, {
-    credentials: 'include',
-  })
-    .then(response => response.json())
-    .then((res: RoomDetailInfo) => {
-      return res?.data?.super_chat_info?.message_list || []
+    const roomDetailInfo = await fetchJson<RoomDetailInfo>(`https://api.live.bilibili.com/xlive/web-room/v1/index/getInfoByRoom?room_id=${roomId}`, {
+      credentials: 'include',
     })
-  if (Array.isArray(existingSCList) && existingSCList.length) {
-    console.log('existingSCList', existingSCList)
-    for (const i of existingSCList) {
-      const time = i.end_time - i.start_time
-      const delay = time - i.time
-      processData({ data: { ...i, time, delay } })
+    const existingSCList = roomDetailInfo?.data?.super_chat_info?.message_list || []
+    if (Array.isArray(existingSCList) && existingSCList.length && isCurrentMount(currentMountId)) {
+      console.log('existingSCList', existingSCList)
+      for (const i of existingSCList) {
+        if (!isCurrentMount(currentMountId))
+          return
+
+        const time = i.end_time - i.start_time
+        const delay = time - i.time
+        processData({ data: { ...i, time, delay } })
+      }
     }
-  }
-  const paramsWithWbi = await wbi({
-    id: roomId,
-  })
-  const key = await fetch(`https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?${paramsWithWbi}`, {
-    credentials: 'include'
-  })
-    .then(response => response.json())
-    .then((res: DanmuInfo) => {
-      const { data: { token } = { token: '' } } = res
-      return token
+
+    const paramsWithWbi = await wbi({
+      id: roomId,
+    })
+    if (!isCurrentMount(currentMountId))
+      return
+
+    const danmuInfo = await fetchJson<DanmuInfo>(`https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?${paramsWithWbi}`, {
+      credentials: 'include',
+    })
+    const key = danmuInfo?.data?.token || ''
+    if (!key || !isCurrentMount(currentMountId))
+      return
+
+    console.log('token', key)
+    const accountInfo = await fetchJson<personInfo>('https://api.bilibili.com/x/member/web/account', {
+      credentials: 'include',
+    })
+    const mid = accountInfo?.data?.mid || 0
+    if (!isCurrentMount(currentMountId))
+      return
+
+    console.log('mid', mid)
+    const nextKeepLiveWS = new KeepLiveWS(roomId, {
+      protover: 3,
+      key: String(key),
+      uid: mid,
     })
 
-  console.log('token', key)
-  const mid = await fetch(`https://api.bilibili.com/x/member/web/account`, {
-    credentials: 'include'
-  })
-    .then(response => response.json())
-    .then((res: personInfo) => {
-      const { data: { mid } = { mid: 0 } } = res
-      return mid
+    if (!isCurrentMount(currentMountId)) {
+      nextKeepLiveWS.close()
+      return
+    }
+
+    keepLiveWS?.close()
+    keepLiveWS = nextKeepLiveWS
+    keepLiveWS.on('SUPER_CHAT_MESSAGE', (res: DanmuDataProps) => {
+      if (!isCurrentMount(currentMountId))
+        return
+
+      console.log('SC', res)
+      processData(res)
     })
-  console.log('mid', mid)
-  keepLiveWS = new KeepLiveWS(roomId, {
-    protover: 3,
-    key: String(key),
-    uid: mid,
-  })
-  keepLiveWS.on('SUPER_CHAT_MESSAGE', (res: DanmuDataProps) => {
-    console.log('SC', res)
-    processData(res)
-  })
+  }
+  catch (error) {
+    if (isCurrentMount(currentMountId))
+      console.error('初始化直播SC连接失败:', error)
+  }
 }
 
 // 获取跟video的dom（B站video的父级dom结构老是变，有病的！）
@@ -147,4 +170,16 @@ export function getVideoDom() {
 
 function getVideoDomFromIframe() {
   return Array.from(document.querySelectorAll('iframe')).filter(item => item.allowFullscreen)[0]
+}
+
+async function fetchJson<T>(input: RequestInfo | URL, init?: RequestInit): Promise<T> {
+  const response = await fetch(input, init)
+  if (!response.ok)
+    throw new Error(`Request failed: ${response.status} ${response.statusText}`)
+
+  return response.json() as Promise<T>
+}
+
+function isCurrentMount(currentMountId: number) {
+  return isMount && currentMountId === mountId
 }

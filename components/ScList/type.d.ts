@@ -16,5 +16,5 @@ export interface ScInfo {
 }
 
 export interface SCListProps {
-  scDocument: Document
+  scDocument?: Document
 }

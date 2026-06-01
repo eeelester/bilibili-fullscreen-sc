@@ -1,4 +1,4 @@
-import { existElement, mount, unmount } from './utils'
+import { hasMountElement, mount, unmount } from './utils'
 import ObservePageFullScreen from './observePageFullScreen'
 import { processPosition, processSize } from '@/utils'
 import type { PositionEnum, sizeEnum } from '@/constant'
@@ -8,7 +8,7 @@ interface BrowserMessage {
   position?: PositionEnum
 }
 
-export default defineContentScript({
+const fullScreenContentScript = defineContentScript({
   matches: ['https://live.bilibili.com/*'],
   main() {
     // 监听全屏模式
@@ -16,7 +16,7 @@ export default defineContentScript({
       'fullscreenchange',
       () => {
         // 从全屏变为非全屏
-        if (!document.fullscreenElement && existElement) {
+        if (!document.fullscreenElement && hasMountElement()) {
           unmount('------全屏退出，清除完毕------')
           return
         }
@@ -39,3 +39,5 @@ export default defineContentScript({
     })
   },
 })
+
+export default fullScreenContentScript

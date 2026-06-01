@@ -17,7 +17,7 @@ export interface DanmuDataProps {
     background_color: string
     time: number
     id: number
-    delay: number // existing sc的属性
+    delay?: number // existing sc的属性
   }
   [propNames: string]: any
 }

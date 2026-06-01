@@ -18,13 +18,27 @@ export function ReplaceUnsafeWindowPlugin(options: PluginOptions): PluginReturn 
     name: 'vite-plugin-replace-unsafeWindow',
     apply: 'build',
     closeBundle() {
-      const publicDir = path.resolve(process.cwd(), 'public')
-      const targetFile = path.join(publicDir, 'bilibili-web-show-ip-location.user.js')
-      if (fs.existsSync(targetFile)) {
-        let content = fs.readFileSync(targetFile, 'utf-8')
-        content = content.replace(options.regex, options.replacement)
-        fs.writeFileSync(targetFile, content, 'utf-8')
-      }
+      const outputDir = path.resolve(process.cwd(), '.output')
+      replaceOutputFile(outputDir, 'bilibili-web-show-ip-location.user.js', options)
     },
+  }
+}
+
+function replaceOutputFile(dir: string, filename: string, options: PluginOptions) {
+  if (!fs.existsSync(dir))
+    return
+
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const entryPath = path.join(dir, entry.name)
+    if (entry.isDirectory()) {
+      replaceOutputFile(entryPath, filename, options)
+      continue
+    }
+
+    if (entry.name !== filename)
+      continue
+
+    const content = fs.readFileSync(entryPath, 'utf-8')
+    fs.writeFileSync(entryPath, content.replace(options.regex, options.replacement), 'utf-8')
   }
 }

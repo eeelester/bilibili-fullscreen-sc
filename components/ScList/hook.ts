@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { ScInfo } from './type'
 import { PositionEnum } from '@/constant'
 
 type propRef = React.MutableRefObject<HTMLDivElement | undefined | null>
 
 function useMove(ref: propRef, scDocument: Document, initialPosition: PositionEnum = PositionEnum.BOTTOM_LEFT) {
-  const height = useMemo(() => scDocument.documentElement.clientHeight, [])
+  const height = scDocument.documentElement.clientHeight
   // 根据初始位置设置初始坐标
   const getInitialPosition = useCallback(() => {
     switch (initialPosition) {
@@ -88,7 +88,7 @@ function useMove(ref: propRef, scDocument: Document, initialPosition: PositionEn
       scDocument.removeEventListener('mouseup', handleMouseUp)
       scDocument.removeEventListener('mousemove', handleMouseMove)
     }
-  }, [ref, handleMouseDown, handleMouseUp, handleMouseMove])
+  }, [ref, scDocument, handleMouseDown, handleMouseUp, handleMouseMove])
 
   return { ...position }
 }
@@ -99,9 +99,13 @@ function useRAF(setScList: React.Dispatch<React.SetStateAction<ScInfo[]>>) {
   useEffect(() => {
     const loop = () => {
       const currentTime = Date.now() // 当前时间
-      setScList(prev =>
-        prev.filter(item => currentTime - item.addedTime < (item.time - item.delay) * 1000), // 过滤掉超时的项
-      )
+      setScList((prev) => {
+        if (!prev.length)
+          return prev
+
+        const next = prev.filter(item => currentTime - item.addedTime < (item.time - item.delay) * 1000) // 过滤掉超时的项
+        return next.length === prev.length ? prev : next
+      })
 
       animationId.current = requestAnimationFrame(loop)
     }
@@ -110,7 +114,7 @@ function useRAF(setScList: React.Dispatch<React.SetStateAction<ScInfo[]>>) {
     return () => {
       animationId.current && cancelAnimationFrame(animationId.current)
     }
-  }, [])
+  }, [setScList])
 }
 
 export { useMove, useRAF }

@@ -9,7 +9,7 @@ import closeIcon from '~/assets/close.svg'
 import './index.less'
 
 function SCList(props: SCListProps) {
-  const { scDocument } = props
+  const { scDocument = document } = props
   const [scList, setScList] = useState<ScInfo[]>([])
   const [size, setSize] = useState<sizeEnum>(DEFAULT_SIZE)
   const [position, setPosition] = useState<PositionEnum>(PositionEnum.BOTTOM_LEFT)

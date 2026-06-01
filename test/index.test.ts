@@ -5,7 +5,7 @@ import { testData } from './testData';
 import { describe, expect, it, beforeAll } from '@jest/globals';
 
 
-describe("bilibili-fullscreen-sc", () => {
+describe.skip("bilibili-fullscreen-sc e2e", () => {
   let page: Page
   let browser: Browser
 

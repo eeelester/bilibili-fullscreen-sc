@@ -9,6 +9,8 @@ on:
       - '**.ts'
       - '**.tsx'
       - '**.less'
+      - package.json
+      - pnpm-lock.yaml
       - '.github/workflows/**'
   pull_request:
     branches:
@@ -18,6 +20,8 @@ on:
       - '**.ts'
       - '**.tsx'
       - '**.less'
+      - package.json
+      - pnpm-lock.yaml
       - '.github/workflows/**'
 
 jobs:
@@ -44,8 +48,14 @@ jobs:
           HUSKY: 0
           PUPPETEER_SKIP_DOWNLOAD: true
 
-      - name: Install ESLint globally
-        run: pnpm add -g eslint@^8
+      - name: Type check
+        run: pnpm compile
 
       - name: Lint
         run: pnpm lint
+
+      - name: Test
+        run: pnpm test -- --runInBand
+
+      - name: Build
+        run: pnpm build

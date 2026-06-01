@@ -4,7 +4,7 @@
   "packageManager": "pnpm@9.15.9",
   "description": "B站助手，全屏显示SC，评论显示IP属地",
   "author": "elester",
-  "license": "ISC",
+  "license": "MIT",
   "keywords": [
     "bilibili",
     "sc",
@@ -27,7 +27,8 @@
     "wxt:submit": "wxt submit --chrome-zip .output/*-chrome.zip",
     "compile": "tsc --noEmit",
     "postinstall": "wxt prepare",
-    "lint": "eslint  . --fix",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "test": "jest",
     "prepare": "husky install",
     "release": "release-it"

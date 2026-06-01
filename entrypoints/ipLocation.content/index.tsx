@@ -1,4 +1,4 @@
-export default defineContentScript({
+const ipLocationContentScript = defineContentScript({
   matches: ['https://*.bilibili.com/*'],
   runAt: 'document_start',
   main() {
@@ -46,3 +46,5 @@ export default defineContentScript({
     }
   },
 })
+
+export default ipLocationContentScript
