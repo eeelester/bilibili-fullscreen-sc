@@ -1,5 +1,19 @@
 
 
+## [0.9.4](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.9.3...0.9.4) (2026-06-01)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* ci ([600206f](https://github.com/eeelester/bilibili-fullscreen-sc/commit/600206fe7447280c3d9afd4b56ab8ef66972a051))
+* ci ([5b70d60](https://github.com/eeelester/bilibili-fullscreen-sc/commit/5b70d606583d2ee02fe3119fd7a4ab287feb295d))
+* Edge web fullscreen SC not showing ([0ea993f](https://github.com/eeelester/bilibili-fullscreen-sc/commit/0ea993fcf5a189e3f9f4fbe26ba2d3a64492d89c))
+
+
+### 🎫 Chores | 其他更新
+
+* make pre-commit hook executable ([57aafba](https://github.com/eeelester/bilibili-fullscreen-sc/commit/57aafbabe360cbaccc1a7ddc17aba2fdbacc4220))
+
 ## [0.9.3](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.9.2...0.9.3) (2025-07-03)
 
 
