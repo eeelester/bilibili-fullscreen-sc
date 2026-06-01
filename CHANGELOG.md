@@ -1,5 +1,13 @@
 
 
+## [0.9.5](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.9.4...0.9.5) (2026-06-01)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* ci ([8119955](https://github.com/eeelester/bilibili-fullscreen-sc/commit/81199550726aa98cb7aace145910edfdb45d2bcf))
+* codex review ([4fbe71c](https://github.com/eeelester/bilibili-fullscreen-sc/commit/4fbe71c22703a91d9f7f309f32051be68d4e39ec))
+
 ## [0.9.4](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.9.3...0.9.4) (2026-06-01)
 
 

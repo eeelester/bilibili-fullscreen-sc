@@ -1,6 +1,6 @@
 {
   "name": "bilibili-fullscreen-sc",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "packageManager": "pnpm@9.15.9",
   "description": "B站助手，全屏显示SC，评论显示IP属地",
   "author": "elester",
