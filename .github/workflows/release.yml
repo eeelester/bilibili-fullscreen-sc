@@ -32,7 +32,10 @@ jobs:
           git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile --prefer-offline
+        env:
+          HUSKY: 0
+          PUPPETEER_SKIP_DOWNLOAD: true
 
       - name: release
         run: pnpm release -i=${{ github.event.inputs.version }}
