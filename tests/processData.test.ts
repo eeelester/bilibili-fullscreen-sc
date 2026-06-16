@@ -27,4 +27,27 @@ describe('processData', () => {
 
     eventBus.unsubscribe(WS_SC_EVENT, listener)
   })
+
+  it('emits a readable username color when upstream colors have low contrast', () => {
+    const listener = jest.fn()
+    eventBus.subscribe(WS_SC_EVENT, listener)
+
+    processData({
+      ...testData,
+      data: {
+        ...testData.data,
+        background_color: '#FFF1C5',
+        user_info: {
+          ...testData.data.user_info,
+          name_color: '#00D1F1',
+        },
+      },
+    })
+
+    expect(listener).toHaveBeenCalledWith(expect.objectContaining({
+      name_color: '#333333',
+    }))
+
+    eventBus.unsubscribe(WS_SC_EVENT, listener)
+  })
 })

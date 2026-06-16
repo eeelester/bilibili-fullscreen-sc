@@ -1,6 +1,7 @@
 import { eventBus } from '@/utils/event'
 import type { PositionEnum, sizeEnum } from '@/constant'
 import { POSITION_EVENT, SIZE_EVENT, WS_SC_EVENT } from '@/constant'
+import { getReadableTextColor } from '@/utils/color'
 
 export interface DanmuDataProps {
   data: {
@@ -50,7 +51,7 @@ function processData(res: DanmuDataProps) {
     face,
     face_frame,
     uname,
-    name_color,
+    name_color: getReadableTextColor(name_color, background_color),
     price,
     message,
     message_font_color,
