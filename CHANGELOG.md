@@ -1,5 +1,13 @@
 
 
+## [0.9.6](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.9.5...0.9.6) (2026-06-16)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* ci error ([cf2ac9d](https://github.com/eeelester/bilibili-fullscreen-sc/commit/cf2ac9dd2d1e0634d5995bc04732b37d114b9bf8))
+* sclist添加对名字颜色处理 ([69d1823](https://github.com/eeelester/bilibili-fullscreen-sc/commit/69d1823359e8c3187841ee5534de385b4cf4caf7))
+
 ## [0.9.5](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.9.4...0.9.5) (2026-06-01)
 
 
