@@ -20,7 +20,7 @@ module.exports = antfu(
     ignores: [
       '*.config.js',
       '*.config.ts',
-      'test/**',
+      'tests/**',
       'public/**'
     ]
   },
