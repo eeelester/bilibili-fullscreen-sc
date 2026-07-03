@@ -1,5 +1,12 @@
 
 
+## [0.9.7](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.9.6...0.9.7) (2026-07-03)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* 直播页面非主题页深色模式下用户名显示不清 ([d822616](https://github.com/eeelester/bilibili-fullscreen-sc/commit/d822616b9d5fc25fdbdea8bf63e0b8b4be2da8f9))
+
 ## [0.9.6](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.9.5...0.9.6) (2026-06-16)
 
 
