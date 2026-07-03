@@ -114,7 +114,7 @@ function SCList(props: SCListProps) {
                       />
                     </div>
                     <div className="top-right-container">
-                      <span className="name" style={{ color: name_color }}>
+                      <span className="name" style={{ '--sc-name-color': name_color } as React.CSSProperties}>
                         {uname}
                       </span>
                       <span className="price">
