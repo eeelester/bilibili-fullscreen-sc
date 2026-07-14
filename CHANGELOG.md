@@ -1,5 +1,12 @@
 
 
+## [0.10.0](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.9.7...0.10.0) (2026-07-14)
+
+
+### ✨ Features | 新功能
+
+* 升级ip脚本;修复因为页面加载顺序可能导致评论区无法展示ip属地问题 ([c3358bc](https://github.com/eeelester/bilibili-fullscreen-sc/commit/c3358bc128ae3f768f3416f38ab9ac2fa7954fc7))
+
 ## [0.9.7](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.9.6...0.9.7) (2026-07-03)
 
 
