@@ -1,34 +1,31 @@
+import type { ScInfo } from '@/components/ScList/type'
+import { WS_SC_EVENT } from '@/constant'
+
+type SuperChatEvent = Omit<ScInfo, 'addedTime' | 'nodeRef'>
+type SuperChatListener = (payload: SuperChatEvent) => void
+
 class EventBus {
-  events: { [propName: string]: Function[] }
+  private readonly superChatListeners = new Set<SuperChatListener>()
 
-  constructor() {
-    this.events = {}
+  subscribe(event: typeof WS_SC_EVENT, callback: SuperChatListener) {
+    if (event === WS_SC_EVENT)
+      this.superChatListeners.add(callback)
   }
 
-  subscribe(event: string, callback: Function) {
-    (this.events[event] ? this.events[event] : this.events[event] = []).push(callback)
+  unsubscribe(event: typeof WS_SC_EVENT, callback: SuperChatListener) {
+    if (event === WS_SC_EVENT)
+      this.superChatListeners.delete(callback)
   }
 
-  unsubscribe(event: string, callback: Function) {
-    const subscribedEvents = this.events[event]
+  emit(event: typeof WS_SC_EVENT, payload: SuperChatEvent) {
+    if (event !== WS_SC_EVENT)
+      return
 
-    if (subscribedEvents && subscribedEvents.length)
-      this.events[event] = this.events[event].filter(cb => cb !== callback)
-  }
-
-  emit(event: string, ...rest) {
-    // 取出所有订阅者的回调执行
-    const subscribedEvents = this.events[event]
-
-    if (subscribedEvents && subscribedEvents.length) {
-      subscribedEvents.forEach((callback) => {
-        callback.apply(this, rest)
-      })
-    }
+    this.superChatListeners.forEach(listener => listener(payload))
   }
 }
 
-// esmodule有缓存，已经是单例模式了，不需要再另外写代码处理
 const eventBus = new EventBus()
 
+export type { SuperChatEvent }
 export { eventBus }
