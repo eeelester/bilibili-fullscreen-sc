@@ -2,38 +2,28 @@ name: CI
 
 on:
   push:
-    branches:
-      - main
-    paths:
-      - '**.js'
-      - '**.ts'
-      - '**.tsx'
-      - '**.less'
-      - package.json
-      - pnpm-lock.yaml
-      - '.github/workflows/**'
+    branches: [main]
   pull_request:
-    branches:
-      - main
-    paths:
-      - '**.js'
-      - '**.ts'
-      - '**.tsx'
-      - '**.less'
-      - package.json
-      - pnpm-lock.yaml
-      - '.github/workflows/**'
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  CI:
+  quality:
+    name: Type, lint, unit, build
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v4
         with:
           version: 9.15.9
 
@@ -53,9 +43,63 @@ jobs:
 
       - name: Lint
         run: pnpm lint
+        env:
+          CI: 1
 
-      - name: Test
-        run: pnpm test -- --runInBand
+      - name: Verify vendored IP location script
+        run: pnpm check:vendor
+
+      - name: Unit tests and coverage
+        run: pnpm test:coverage
 
       - name: Build
         run: pnpm build
+
+      - name: Check bundle budget
+        run: pnpm check:bundle
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage
+          if-no-files-found: ignore
+          retention-days: 7
+
+  e2e:
+    name: Extension E2E
+    needs: quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PUPPETEER_CACHE_DIR: ${{ github.workspace }}/.cache/puppeteer
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Cache Chrome for Testing
+        uses: actions/cache@v4
+        with:
+          path: .cache/puppeteer
+          key: puppeteer-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --prefer-offline
+        env:
+          HUSKY: 0
+          PUPPETEER_SKIP_DOWNLOAD: true
+
+      - name: Install Chrome for Testing
+        run: pnpm exec puppeteer browsers install chrome
+
+      - name: Run extension E2E
+        run: xvfb-run --auto-servernum pnpm test:e2e
