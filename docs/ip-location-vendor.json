@@ -1,0 +1,11 @@
+{
+  "name": "BiliReveal Lite",
+  "version": "2.3.0",
+  "sourceRepository": "https://github.com/maxchang3/BiliReveal",
+  "sourceAsset": "https://github.com/MaxChang3/Bilibili-Web-Show-IP-Location/releases/latest/download/bilireveal.user.js",
+  "license": "MIT",
+  "importedAt": "2026-07-14",
+  "importCommit": "c3358bc128ae3f768f3416f38ab9ac2fa7954fc7",
+  "importedAssetSha256": "e5f9c82487810b8af0ed858e0e79032f800ae113cdf9e99ad0d1b70f6d1b1ed2",
+  "localSha256": "e5f9c82487810b8af0ed858e0e79032f800ae113cdf9e99ad0d1b70f6d1b1ed2"
+}
