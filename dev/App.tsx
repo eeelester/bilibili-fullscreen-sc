@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
-import { testData } from './testData'
 import SCList from '@/components/ScList'
+import { superChatFixture } from '@/fixtures/superChat'
 import { processData } from '@/utils'
 
 /**
@@ -12,17 +12,16 @@ export default function App() {
     let count = 0
     let timeout: NodeJS.Timeout
     const timeoutCallback = () => {
-      processData({ ...testData, ...{ data: { ...testData.data, id: Math.floor(Math.random() * 10000), time: [60, 60, 30, 60, 200, 30, 60, 30, 60, 200, 60, 60, 30, 60, 200, 30, 60, 30, 60, 200][count], message: String(count) } } })
-      // processData({ ...testData, ...{ data: { ...testData.data, id: Math.floor(Math.random() * 10000) } } })
+      processData({ ...superChatFixture, ...{ data: { ...superChatFixture.data, id: Math.floor(Math.random() * 10000), time: [60, 60, 30, 60, 200, 30, 60, 30, 60, 200, 60, 60, 30, 60, 200, 30, 60, 30, 60, 200][count], message: String(count) } } })
       count++
       if (count > 20)
         clearTimeout(timeout)
       else
-        setTimeout(timeoutCallback, 100)
+        timeout = setTimeout(timeoutCallback, 100)
     }
     timeout = setTimeout(timeoutCallback, 100)
 
-    processData({ ...testData, ...{ data: { ...testData.data, id: Math.floor(Math.random() * 10000) } } })
+    processData({ ...superChatFixture, ...{ data: { ...superChatFixture.data, id: Math.floor(Math.random() * 10000) } } })
 
     return () => {
       clearTimeout(timeout)
