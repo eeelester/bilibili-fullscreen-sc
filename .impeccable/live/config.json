@@ -1,0 +1,9 @@
+{
+  "files": [
+    "entrypoints/**/*.html",
+    "dev/**/*.html"
+  ],
+  "insertBefore": "</body>",
+  "commentSyntax": "html",
+  "cspChecked": true
+}
