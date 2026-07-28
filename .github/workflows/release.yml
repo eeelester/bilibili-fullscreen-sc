@@ -4,14 +4,29 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: Version to release
+        description: Exact semver to release, for example 0.11.0
         required: true
+        type: string
+      submit_to_store:
+        description: Submit the verified zip to Chrome Web Store after GitHub Release succeeds
+        required: true
+        default: false
+        type: boolean
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 jobs:
-  submit:
-    name: Release && Submit
+  release:
+    name: Git tag and GitHub Release
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: write
+    outputs:
+      version: ${{ steps.preflight.outputs.version }}
+      asset_name: ${{ steps.asset-name.outputs.asset_name }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -26,10 +41,85 @@ jobs:
           node-version: 20
           cache: pnpm
 
-      - name: git config
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --prefer-offline
+        env:
+          HUSKY: 0
+          PUPPETEER_SKIP_DOWNLOAD: true
+
+      - name: Configure release identity
         run: |
-          git config --global user.name "${GITHUB_ACTOR}"
-          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+      - name: Release preflight
+        id: preflight
+        run: |
+          git diff --exit-code
+          node scripts/release-preflight.mjs "${{ inputs.version }}"
+          if git rev-parse --verify --quiet "refs/tags/${{ inputs.version }}"; then
+            echo "Tag ${{ inputs.version }} already exists" >&2
+            exit 1
+          fi
+
+      - name: Release with version bump
+        if: steps.preflight.outputs.mode == 'release-it'
+        run: pnpm release --ci --increment "${{ steps.preflight.outputs.version }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NO_UPDATE_NOTIFIER: 1
+
+      - name: Release an already-bumped version
+        if: steps.preflight.outputs.mode == 'already-bumped'
+        run: |
+          pnpm zip
+          pnpm check:release-asset "${{ steps.preflight.outputs.version }}"
+          git tag --annotate "${{ steps.preflight.outputs.version }}" --message "Release ${{ steps.preflight.outputs.version }}"
+          git push origin "refs/tags/${{ steps.preflight.outputs.version }}"
+          gh release create "${{ steps.preflight.outputs.version }}" .output/*-${{ steps.preflight.outputs.version }}-chrome.zip --generate-notes --title "${{ steps.preflight.outputs.version }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify release asset
+        id: asset
+        run: node scripts/check-release-asset.mjs "${{ steps.preflight.outputs.version }}"
+
+      - name: Verify remote release
+        run: |
+          test "$(git ls-remote origin "refs/tags/${{ steps.preflight.outputs.version }}" | wc -l)" -eq 1
+          gh release view "${{ steps.preflight.outputs.version }}" --json assets --jq '.assets[].name' | grep -Fx "$(basename "${{ steps.asset.outputs.asset }}")"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Export asset name
+        id: asset-name
+        run: echo "asset_name=$(basename '${{ steps.asset.outputs.asset }}')" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: extension-${{ steps.preflight.outputs.version }}
+          path: ${{ steps.asset.outputs.asset }}
+          if-no-files-found: error
+          retention-days: 14
+
+  submit:
+    name: Chrome Web Store submission
+    if: inputs.submit_to_store
+    needs: release
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: chrome-web-store
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --prefer-offline
@@ -37,16 +127,13 @@ jobs:
           HUSKY: 0
           PUPPETEER_SKIP_DOWNLOAD: true
 
-      - name: release
-        run: pnpm release -i=${{ github.event.inputs.version }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: extension-${{ needs.release.outputs.version }}
+          path: .output
 
-      - name: Submit to stores
-        run: |
-          pnpm wxt submit \
-            --chrome-zip .output/*-chrome.zip
-
+      - name: Submit verified asset
+        run: pnpm wxt submit --chrome-zip ".output/${{ needs.release.outputs.asset_name }}"
         env:
           CHROME_EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
           CHROME_CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}

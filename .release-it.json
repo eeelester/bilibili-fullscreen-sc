@@ -1,15 +1,20 @@
 {
   "github": {
     "release": true,
+    "releaseName": "${version}",
     "assets": [
-      ".output/*.zip"
+      ".output/*-${version}-chrome.zip"
     ]
   },
   "npm": {
     "publish": false
   },
   "git": {
-    "commitMessage": "chore(tag): release v${version}"
+    "commitMessage": "chore(tag): release ${version}",
+    "requireBranch": "main",
+    "requireCleanWorkingDir": true,
+    "requireUpstream": true,
+    "tagName": "${version}"
   },
   "hooks": {
     "after:bump": "pnpm zip"
