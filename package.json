@@ -19,9 +19,15 @@
     "*.sass",
     "*.less"
   ],
+  "engines": {
+    "node": ">=20.12.0"
+  },
   "scripts": {
     "dev": "wxt",
     "build": "wxt build",
+    "check:bundle": "node scripts/check-bundle-size.mjs",
+    "check:release-asset": "node scripts/check-release-asset.mjs",
+    "check:vendor": "node scripts/check-ip-location-vendor.mjs",
     "zip": "wxt zip",
     "wxt:submit-init": "wxt submit init",
     "wxt:submit": "wxt submit --chrome-zip .output/*-chrome.zip",
@@ -30,42 +36,44 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "jest",
-    "prepare": "husky install",
+    "test:coverage": "jest --coverage --runInBand",
+    "test:e2e": "pnpm build && jest --config jest.e2e.config.js --runInBand",
+    "prepare": "husky",
     "release": "release-it"
   },
   "dependencies": {
     "bilibili-live-ws": "^6.3.1",
     "md5": "^2.3.0",
-    "rc-switch": "^4.1.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "react-transition-group": "^4.4.5"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^2.4.3",
-    "@eslint/eslintrc": "^2.1.4",
-    "@jest/globals": "^29.7.0",
-    "@release-it/conventional-changelog": "^8.0.1",
-    "@testing-library/jest-dom": "5.16.4",
-    "@types/eslint__eslintrc": "^2.1.1",
-    "@types/jest": "^29.5.11",
-    "@types/md5": "^2.3.5",
-    "@types/rc-switch": "^1.9.5",
-    "@types/react": "^18.2.43",
-    "@types/react-dom": "^18.2.17",
-    "@types/testing-library__jest-dom": "^5.14.9",
-    "@wxt-dev/module-react": "^1.1.1",
-    "husky": "^8.0.3",
-    "jest": "^29.7.0",
-    "lint-staged": "^15.2.0",
-    "puppeteer": "^21.6.0",
-    "release-it": "^17.2.1",
-    "ts-jest": "^29.1.1",
-    "typescript": "^5.3.3",
+    "@antfu/eslint-config": "^4.3.0",
+    "@eslint-react/eslint-plugin": "^1.19.0",
+    "@eslint/eslintrc": "^3.3.6",
+    "@jest/globals": "^30.4.1",
+    "@release-it/conventional-changelog": "^10.0.6",
+    "@testing-library/jest-dom": "6.9.1",
+    "@types/jest": "^30.0.0",
+    "@types/md5": "^2.3.6",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "@types/react-transition-group": "^4.4.12",
+    "@wxt-dev/module-react": "^1.1.5",
+    "eslint": "9.39.2",
+    "eslint-plugin-format": "2.0.1",
+    "husky": "^9.1.7",
+    "jest": "^30.4.2",
+    "lint-staged": "^16.2.7",
+    "puppeteer": "^24.37.5",
+    "release-it": "^18.1.2",
+    "ts-jest": "^29.4.12",
+    "typescript": "^5.9.3",
     "wxt": "^0.20.7"
   },
   "lint-staged": {
-    "{components,entrypoints,utils,constant}/**/*.{js,jsx,tsx,ts}": [
+    "*.{js,mjs,cjs,ts,tsx,less,md,json,yml,yaml,html}": [
       "eslint --fix"
     ]
   }

@@ -1,15 +1,15 @@
 {
-	"compilerOptions": {
-		"baseUrl": "./",
-		"paths": {
-			"@/*": ["../src/*"]
-		},
+  "compilerOptions": {
     "target": "es2016",
+    "baseUrl": "./",
     "module": "commonjs",
-		"esModuleInterop": true,
-		"forceConsistentCasingInFileNames": true,
-		"strict": true,
-		"skipLibCheck": true,
-		"types": ["node","jest","@testing-library/jest-dom"]
-	}
+    "paths": {
+      "@/*": ["../src/*"]
+    },
+    "types": ["node", "jest", "@testing-library/jest-dom"],
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
+  }
 }

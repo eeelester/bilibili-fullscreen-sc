@@ -1,5 +1,5 @@
-import fs from 'node:fs'
 import type { ResolvedPublicFile } from 'wxt'
+import fs from 'node:fs'
 
 interface ReplacePublicAssetOptions {
   filename: string

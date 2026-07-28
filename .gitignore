@@ -10,6 +10,7 @@ DEVELOP.md
 
 node_modules
 .output
+coverage
 stats.html
 stats-*.json
 .wxt

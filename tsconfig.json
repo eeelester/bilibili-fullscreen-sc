@@ -3,6 +3,6 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "allowImportingTsExtensions": true,
-    "noImplicitAny": false
+    "noImplicitAny": true
   }
 }
