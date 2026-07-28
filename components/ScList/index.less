@@ -1,168 +1,220 @@
 @sc-width: 270px;
-
-// 定义缩放比例变量
 @scale-max: 1.2;
 @scale-min: 0.8;
 @scale-normal: 1;
 
-// 创建缩放混合器
-.scale-element(@scale) {
-  .sc {
+.bfs-scale(@scale) {
+  .bfs-sc-card {
     width: calc(@sc-width * @scale);
-    border-radius: 6px;
-    font-family:
-      Arial, 'Microsoft YaHei', 'Microsoft Sans Serif', 'Microsoft SanSerf',
-      '微软雅黑';
     margin: 0 10px 4px 0;
-
+    border-radius: 6px;
+    font-family: Arial, 'Microsoft YaHei', 'Microsoft Sans Serif', sans-serif;
     font-size: calc(12px * @scale);
+  }
 
-    .top-container {
-      box-sizing: border-box;
-      padding: calc(8px * @scale) calc(10px * @scale);
-      height: calc(50px * @scale);
-      display: flex;
-      align-items: center;
-      border-radius: 6px 6px 0 0;
-      border-width: 1px;
-      border-style: solid;
+  .bfs-sc-header {
+    box-sizing: border-box;
+    height: calc(50px * @scale);
+    padding: calc(8px * @scale) calc(10px * @scale);
+    display: flex;
+    align-items: center;
+    border: 1px solid;
+    border-radius: 6px 6px 0 0;
+  }
 
-      .avatar-container {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+  .bfs-sc-avatar-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-        .avatar {
-          width: calc(30px * @scale);
-          height: calc(30px * @scale);
-          border-radius: calc(17px * @scale);
-          background-size: cover;
-          background-position: center center;
-          background-repeat: no-repeat;
-        }
+  .bfs-sc-avatar {
+    width: calc(30px * @scale);
+    height: calc(30px * @scale);
+    border-radius: 50%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+  }
 
-        .frame {
-          width: calc(34px * @scale);
-          height: calc(34px * @scale);
-          position: absolute;
-          top: calc(-2px * @scale);
-          left: calc(-2px * @scale);
-        }
-      }
+  .bfs-sc-avatar-frame {
+    position: absolute;
+    top: calc(-2px * @scale);
+    left: calc(-2px * @scale);
+    width: calc(34px * @scale);
+    height: calc(34px * @scale);
+  }
 
-      .top-right-container {
-        margin: calc(2px * @scale) 0 0 calc(6px * @scale);
-        display: flex;
-        flex-direction: column;
-        color: #333;
-        width: 100%;
-        flex: 1;
+  .bfs-sc-meta {
+    min-width: 0;
+    margin: calc(2px * @scale) 0 0 calc(6px * @scale);
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    color: #333;
+  }
 
-        .name {
-          color: var(--sc-name-color, #333333) !important;
-        }
+  .bfs-sc-name {
+    overflow: hidden;
+    color: var(--sc-name-color, #333) !important;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
-        .price {
-          padding-top: calc(2px * @scale);
-        }
-      }
+  .bfs-sc-price {
+    padding-top: calc(2px * @scale);
+  }
 
-      .close-btn {
-        align-self: center;
-        width: calc(16px * @scale);
-        cursor: pointer;
-        height: calc(16px * @scale);
-      }
+  .bfs-sc-close {
+    box-sizing: content-box;
+    width: calc(18px * @scale);
+    height: calc(18px * @scale);
+    margin: 0;
+    padding: calc(4px * @scale);
+    flex: 0 0 auto;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    cursor: pointer;
+
+    img {
+      width: 100%;
+      height: 100%;
+      display: block;
     }
 
-    .content {
-      border-radius: 2px 2px 6px 6px;
-      padding: calc(8px * @scale) calc(10px * @scale);
-      min-height: calc(38px * @scale);
-      line-height: calc(20px * @scale);
-      word-break: break-word;
-      color: #ffffff;
+    &:hover {
+      background: rgb(255 255 255 / 35%);
     }
   }
 
-  .progress-inner {
+  .bfs-sc-content {
+    min-height: calc(38px * @scale);
+    padding: calc(8px * @scale) calc(10px * @scale);
+    border-radius: 2px 2px 6px 6px;
+    line-height: calc(20px * @scale);
+    overflow-wrap: anywhere;
+    color: #fff;
+  }
+
+  .bfs-sc-progress {
     width: calc(@sc-width * @scale);
+    margin-bottom: calc(8px * @scale);
     position: relative;
     overflow: hidden;
-    vertical-align: middle;
     border-radius: 100px;
     background-color: #fff;
-    margin-bottom: calc(8px * @scale);
+    vertical-align: middle;
+  }
 
-    .progress-bg {
-      width: 100%;
-      height: calc(4px * @scale);
-      animation-name: clipAnimation;
-      animation-timing-function: linear;
-      animation-iteration-count: 1;
-      animation-fill-mode: forwards;
+  .bfs-sc-progress-bar {
+    width: 100%;
+    height: calc(4px * @scale);
+    animation: bfs-sc-progress linear 1 forwards;
+  }
+}
+
+.bfs-sc-root {
+  all: initial;
+
+  .bfs-sc-overlay {
+    position: fixed;
+    z-index: 999;
+    display: flex;
+    max-width: calc(100vw - 20px);
+    flex-direction: column;
+    align-items: flex-start;
+    overflow: auto;
+    overscroll-behavior: contain;
+  }
+
+  .bfs-sc-drag-handle {
+    box-sizing: border-box;
+    min-width: 32px;
+    min-height: 28px;
+    margin: 0 0 4px;
+    padding: 2px 8px;
+    border: 1px solid rgb(255 255 255 / 55%);
+    border-radius: 6px;
+    background: rgb(24 24 27 / 76%);
+    color: #fff;
+    font:
+      18px/1 system-ui,
+      sans-serif;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
+  .bfs-sc-list {
+    display: flex;
+    flex-direction: column-reverse;
+    flex-wrap: wrap;
+    .bfs-scale(@scale-normal);
+  }
+
+  .sc-enter {
+    opacity: 0;
+  }
+
+  .sc-enter-active {
+    opacity: 1;
+    transition: opacity 500ms ease-in;
+  }
+
+  .sc-exit {
+    opacity: 1;
+  }
+
+  .sc-exit-active {
+    opacity: 0;
+    transition: opacity 500ms ease-in;
+  }
+
+  .bfs-sc-close:focus-visible,
+  .bfs-sc-drag-handle:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 5px #0969da;
+  }
+
+  &.max .bfs-sc-list {
+    .bfs-scale(@scale-max);
+  }
+
+  &.min .bfs-sc-list {
+    .bfs-scale(@scale-min);
+
+    .bfs-sc-card {
+      font-size: 11px !important;
     }
   }
 }
 
-.container {
-  .sc-list {
-    display: flex;
-    flex-direction: column-reverse;
-    flex-wrap: wrap;
-    cursor: move;
-    max-height: calc(100vh - 30px);
-    position: fixed;
-    z-index: 999;
-    overflow: auto;
+@keyframes bfs-sc-progress {
+  from {
+    clip-path: inset(0 0 0 0 round 100px);
+  }
 
-    // 应用默认缩放
-    .scale-element(@scale-normal);
+  to {
+    clip-path: inset(0 100% 0 0 round 100px);
+  }
+}
 
-    .sc-enter {
-      opacity: 0;
-    }
-
-    .sc-enter-active {
-      opacity: 1;
-      transition: opacity 500ms ease-in;
-    }
-
-    .sc-exit {
-      opacity: 1;
-    }
-
+@media (prefers-reduced-motion: reduce) {
+  .bfs-sc-root {
+    .sc-enter-active,
     .sc-exit-active {
-      opacity: 0;
-      transition: opacity 500ms ease-in;
+      transition: none;
     }
 
-    @keyframes clipAnimation {
-      0% {
-        clip-path: inset(0px 0 0px 0px round 100px);
-      }
-
-      100% {
-        clip-path: inset(0px 100% 0px 0px round 100px);
-      }
-    }
-  }
-
-  // 应用缩放混合器
-  &.max {
-    .sc-list {
-      .scale-element(@scale-max);
-    }
-  }
-
-  &.min {
-    .sc-list {
-      .scale-element(@scale-min);
-
-      .sc {
-        font-size: 11px !important;
-      }
+    .bfs-sc-progress-bar {
+      animation: none;
     }
   }
 }

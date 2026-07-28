@@ -1,120 +1,155 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import type { CSSProperties, Dispatch, RefObject, SetStateAction } from 'react'
 import type { ScInfo } from './type'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { PositionEnum } from '@/constant'
 
-type propRef = React.MutableRefObject<HTMLDivElement | undefined | null>
+interface Point {
+  x: number
+  y: number
+}
 
-function useMove(ref: propRef, scDocument: Document, initialPosition: PositionEnum = PositionEnum.BOTTOM_LEFT) {
-  const height = scDocument.documentElement.clientHeight
-  // 根据初始位置设置初始坐标
-  const getInitialPosition = useCallback(() => {
-    switch (initialPosition) {
-      case PositionEnum.TOP_LEFT:
-        return { left: 10, top: 10, maxHeight: height - 30 }
-      case PositionEnum.TOP_RIGHT:
-        return { right: 10, top: 10, maxHeight: height - 30 }
-      case PositionEnum.BOTTOM_RIGHT:
-        return { right: 10, bottom: 140, maxHeight: height - 30 }
-      case PositionEnum.BOTTOM_LEFT:
-      default:
-        return { left: 10, bottom: 140, maxHeight: height - 30 }
+const VIEWPORT_MARGIN = 10
+const BOTTOM_CONTROL_OFFSET = 140
+
+function useMove(ref: RefObject<HTMLDivElement>, scDocument: Document, initialPosition: PositionEnum = PositionEnum.BOTTOM_LEFT) {
+  const [point, setPoint] = useState<Point>({ x: VIEWPORT_MARGIN, y: VIEWPORT_MARGIN })
+  const draggingRef = useRef<{ pointerId: number, x: number, y: number } | null>(null)
+
+  const getViewport = useCallback(() => ({
+    width: scDocument.documentElement.clientWidth,
+    height: scDocument.documentElement.clientHeight,
+  }), [scDocument])
+
+  const clampPoint = useCallback((next: Point): Point => {
+    const { width, height } = getViewport()
+    const rect = ref.current?.getBoundingClientRect()
+    const elementWidth = rect?.width ?? 0
+    const elementHeight = rect?.height ?? 0
+
+    return {
+      x: Math.min(Math.max(VIEWPORT_MARGIN, next.x), Math.max(VIEWPORT_MARGIN, width - elementWidth - VIEWPORT_MARGIN)),
+      y: Math.min(Math.max(VIEWPORT_MARGIN, next.y), Math.max(VIEWPORT_MARGIN, height - Math.min(elementHeight, height - VIEWPORT_MARGIN * 2) - VIEWPORT_MARGIN)),
     }
-  }, [height, initialPosition])
+  }, [getViewport, ref])
 
-  const [position, setPosition] = useState(getInitialPosition())
-  const movingRef = useRef(false)
-  const lastPositionRef = useRef<{ lastX: number | null, lastY: number | null }>({ lastX: 0, lastY: 0 })
+  const resetPosition = useCallback(() => {
+    const { width, height } = getViewport()
+    const rect = ref.current?.getBoundingClientRect()
+    const elementWidth = rect?.width ?? 0
+    const elementHeight = rect?.height ?? 0
+    const right = width - elementWidth - VIEWPORT_MARGIN
+    const bottom = height - elementHeight - BOTTOM_CONTROL_OFFSET
+
+    const next = (() => {
+      switch (initialPosition) {
+        case PositionEnum.TOP_RIGHT:
+          return { x: right, y: VIEWPORT_MARGIN }
+        case PositionEnum.BOTTOM_RIGHT:
+          return { x: right, y: bottom }
+        case PositionEnum.BOTTOM_LEFT:
+          return { x: VIEWPORT_MARGIN, y: bottom }
+        case PositionEnum.TOP_LEFT:
+        default:
+          return { x: VIEWPORT_MARGIN, y: VIEWPORT_MARGIN }
+      }
+    })()
+
+    setPoint(clampPoint(next))
+  }, [clampPoint, getViewport, initialPosition, ref])
 
   useEffect(() => {
-    setPosition(getInitialPosition())
-  }, [getInitialPosition])
+    resetPosition()
+  }, [resetPosition])
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!movingRef.current)
+  useEffect(() => {
+    const targetWindow = scDocument.defaultView
+    if (!targetWindow)
       return
-    const { lastX, lastY } = lastPositionRef.current
-    if (lastX && lastY) {
-      const dx = e.clientX - lastX
-      const dy = e.clientY - lastY
 
-      setPosition((prev) => {
-        const newPos = { ...prev }
+    const handleResize = () => setPoint(current => clampPoint(current))
+    targetWindow.addEventListener('resize', handleResize)
+    return () => targetWindow.removeEventListener('resize', handleResize)
+  }, [clampPoint, scDocument])
 
-        // 根据当前位置属性更新坐标
-        if ('left' in prev)
-          newPos.left = (prev.left as number) + dx
-        if ('right' in prev)
-          newPos.right = (prev.right as number) - dx
-        if ('top' in prev)
-          newPos.top = (prev.top as number) + dy
-        if ('bottom' in prev)
-          newPos.bottom = (prev.bottom as number) - dy
+  const handlePointerMove = useCallback((event: PointerEvent) => {
+    const dragging = draggingRef.current
+    if (!dragging || dragging.pointerId !== event.pointerId)
+      return
 
-        // 更新最大高度
-        if ('top' in prev)
-          newPos.maxHeight = height - ((prev.top as number) + dy) - 30
-        else if ('bottom' in prev)
-          newPos.maxHeight = height - ((prev.bottom) - dy) - 30
+    event.preventDefault()
+    const dx = event.clientX - dragging.x
+    const dy = event.clientY - dragging.y
+    draggingRef.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY }
+    setPoint(current => clampPoint({ x: current.x + dx, y: current.y + dy }))
+  }, [clampPoint])
 
-        return newPos
-      })
-    }
-    lastPositionRef.current = {
-      lastX: e.clientX,
-      lastY: e.clientY,
-    }
-  }, [height])
-
-  const handleMouseDown = useCallback(() => {
-    movingRef.current = true
-  }, [])
-
-  const handleMouseUp = useCallback(() => {
-    movingRef.current = false
-    lastPositionRef.current = {
-      lastX: null,
-      lastY: null,
-    }
+  const stopDragging = useCallback((event: PointerEvent) => {
+    if (draggingRef.current?.pointerId === event.pointerId)
+      draggingRef.current = null
   }, [])
 
   useEffect(() => {
-    const refDom = ref.current
-    refDom?.addEventListener('mousedown', handleMouseDown)
-    scDocument.addEventListener('mouseup', handleMouseUp)
-    scDocument.addEventListener('mousemove', handleMouseMove)
+    scDocument.addEventListener('pointermove', handlePointerMove, { passive: false })
+    scDocument.addEventListener('pointerup', stopDragging)
+    scDocument.addEventListener('pointercancel', stopDragging)
 
     return () => {
-      refDom?.removeEventListener('mousedown', handleMouseDown)
-      scDocument.removeEventListener('mouseup', handleMouseUp)
-      scDocument.removeEventListener('mousemove', handleMouseMove)
+      scDocument.removeEventListener('pointermove', handlePointerMove)
+      scDocument.removeEventListener('pointerup', stopDragging)
+      scDocument.removeEventListener('pointercancel', stopDragging)
     }
-  }, [ref, scDocument, handleMouseDown, handleMouseUp, handleMouseMove])
+  }, [handlePointerMove, scDocument, stopDragging])
 
-  return { ...position }
+  const onPointerDown = useCallback((event: React.PointerEvent<HTMLButtonElement>) => {
+    if (!event.isPrimary || event.button !== 0)
+      return
+
+    event.preventDefault()
+    event.stopPropagation()
+    event.currentTarget.setPointerCapture(event.pointerId)
+    draggingRef.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY }
+  }, [])
+
+  const style: CSSProperties = {
+    left: point.x,
+    top: point.y,
+    maxHeight: `calc(100vh - ${VIEWPORT_MARGIN * 2}px)`,
+  }
+
+  return { dragHandleProps: { onPointerDown }, style }
 }
 
-function useRAF(setScList: React.Dispatch<React.SetStateAction<ScInfo[]>>) {
-  const animationId = useRef<number>()
-
+function useExpiryTimer(scList: ScInfo[], setScList: Dispatch<SetStateAction<ScInfo[]>>, scDocument: Document) {
   useEffect(() => {
-    const loop = () => {
-      const currentTime = Date.now() // 当前时间
-      setScList((prev) => {
-        if (!prev.length)
-          return prev
+    if (!scList.length)
+      return
 
-        const next = prev.filter(item => currentTime - item.addedTime < (item.time - item.delay) * 1000) // 过滤掉超时的项
-        return next.length === prev.length ? prev : next
-      })
+    const now = Date.now()
+    const nextExpiresAt = Math.min(...scList.map(item => item.addedTime + getDisplayDurationMs(item)))
+    const timeout = window.setTimeout(() => {
+      setScList(prev => removeExpiredSc(prev, Date.now()))
+    }, Math.max(0, nextExpiresAt - now))
 
-      animationId.current = requestAnimationFrame(loop)
+    const handleVisibilityChange = () => {
+      if (scDocument.visibilityState === 'visible')
+        setScList(prev => removeExpiredSc(prev, Date.now()))
     }
 
-    animationId.current = requestAnimationFrame(loop)
+    scDocument.addEventListener('visibilitychange', handleVisibilityChange)
     return () => {
-      animationId.current && cancelAnimationFrame(animationId.current)
+      window.clearTimeout(timeout)
+      scDocument.removeEventListener('visibilitychange', handleVisibilityChange)
     }
-  }, [setScList])
+  }, [scDocument, scList, setScList])
 }
 
-export { useMove, useRAF }
+function getDisplayDurationMs(item: Pick<ScInfo, 'delay' | 'time'>) {
+  return Math.max(0, item.time - item.delay) * 1000
+}
+
+function removeExpiredSc(scList: ScInfo[], now: number) {
+  const next = scList.filter(item => now - item.addedTime < getDisplayDurationMs(item))
+  return next.length === scList.length ? scList : next
+}
+
+export { getDisplayDurationMs, removeExpiredSc, useExpiryTimer, useMove }

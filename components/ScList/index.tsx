@@ -1,10 +1,14 @@
-import { createRef, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import type { ScInfo, SCListProps } from './type'
+import type { sizeEnum } from '@/constant'
+import type { SuperChatEvent } from '@/utils/event'
+import { createRef, useCallback, useEffect, useRef, useState } from 'react'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
-import { useMove, useRAF } from './hook'
-import type { SCListProps, ScInfo } from './type'
+import { DEFAULT_SIZE, PositionEnum, WS_SC_EVENT } from '@/constant'
+import { getDeletedScStorageKey, readDeletedScIds, writeDeletedScIds } from '@/utils/deletedSc'
 import { eventBus } from '@/utils/event'
-import { DEFAULT_SIZE, POSITION_EVENT, PositionEnum, SIZE_EVENT, WS_SC_EVENT, sizeEnum } from '@/constant'
+import { normalizePosition, normalizeSize, uiPositionStorage, uiSizeStorage } from '@/utils/settings'
 import closeIcon from '~/assets/close.svg'
+import { useExpiryTimer, useMove } from './hook'
 
 import './index.less'
 
@@ -14,142 +18,164 @@ function SCList(props: SCListProps) {
   const [size, setSize] = useState<sizeEnum>(DEFAULT_SIZE)
   const [position, setPosition] = useState<PositionEnum>(PositionEnum.BOTTOM_LEFT)
   const scListRef = useRef<HTMLDivElement>(null)
-  const positionProps = useMove(scListRef, scDocument, position)
-  useRAF(setScList)
+  const deletedStorageKey = getDeletedScStorageKey(location.pathname)
+  const deletedIdsRef = useRef<Set<number>>()
+  deletedIdsRef.current ??= new Set(readDeletedScIds(sessionStorage, deletedStorageKey))
+  const { dragHandleProps, style: positionStyle } = useMove(scListRef, scDocument, position)
+  useExpiryTimer(scList, setScList, scDocument)
 
-  const Listener = useCallback((scInfo: ScInfo) => {
-    const existDeleteIdList: unknown = JSON.parse(sessionStorage.getItem('deleteId') ?? 'null')
-    if (Array.isArray(existDeleteIdList) && existDeleteIdList.includes(scInfo.id)) {
-      console.log(`该id已被删除`)
+  const Listener = useCallback((scInfo: SuperChatEvent) => {
+    if (deletedIdsRef.current?.has(scInfo.id))
       return
-    }
-    setScList(prev => prev.concat({ ...scInfo, nodeRef: createRef(), addedTime: Date.now() }))
+
+    setScList((prev) => {
+      if (prev.some(item => item.id === scInfo.id))
+        return prev
+
+      return prev.concat({ ...scInfo, nodeRef: createRef<HTMLDivElement>(), addedTime: Date.now() })
+    })
   }, [])
 
-  useLayoutEffect(() => {
-    void (async () => {
-      try {
-        const savedSize = await storage.getItem('local:UISize')
-        if (savedSize && Object.values(sizeEnum).includes(savedSize as sizeEnum))
-          setSize(savedSize as sizeEnum)
+  useEffect(() => {
+    let active = true
+    void Promise.all([
+      uiSizeStorage.getValue(),
+      uiPositionStorage.getValue(),
+    ]).then(([savedSize, savedPosition]) => {
+      if (!active)
+        return
 
-        // 获取保存的位置设置
-        const savedPosition = await storage.getItem('local:UIPosition')
-        if (savedPosition && Object.values(PositionEnum).includes(savedPosition as PositionEnum))
-          setPosition(savedPosition as PositionEnum)
-      }
-      catch (error) {
-        console.error('获取UI设置失败:', error)
-      }
-    })()
+      setSize(normalizeSize(savedSize))
+      setPosition(normalizePosition(savedPosition))
+    }).catch(() => {})
+
+    const unwatchSize = uiSizeStorage.watch(nextSize => setSize(normalizeSize(nextSize)))
+    const unwatchPosition = uiPositionStorage.watch(nextPosition => setPosition(normalizePosition(nextPosition)))
+
+    return () => {
+      active = false
+      unwatchSize()
+      unwatchPosition()
+    }
   }, [])
 
   useEffect(() => {
     eventBus.subscribe(WS_SC_EVENT, Listener)
-    eventBus.subscribe(SIZE_EVENT, setSize)
-    // 订阅位置变更事件
-    eventBus.subscribe(POSITION_EVENT, setPosition)
-
     return () => {
       eventBus.unsubscribe(WS_SC_EVENT, Listener)
-      eventBus.unsubscribe(SIZE_EVENT, setSize)
-      eventBus.unsubscribe(POSITION_EVENT, setPosition)
     }
-  }, [Listener, setSize])
+  }, [Listener])
 
-  const handleDelete = (e: React.MouseEvent<HTMLImageElement, MouseEvent>, id: number) => {
+  const handleDelete = (e: React.MouseEvent<HTMLButtonElement>, id: number) => {
     e.stopPropagation()
     setScList(prev => prev.filter(item => item.id !== id))
-    const existDeleteIdList: unknown = JSON.parse(sessionStorage.getItem('deleteId') ?? 'null')
-    sessionStorage.setItem('deleteId', JSON.stringify(Array.isArray(existDeleteIdList) ? existDeleteIdList.concat([id]) : [id]))
+    deletedIdsRef.current?.add(id)
+    writeDeletedScIds(sessionStorage, deletedStorageKey, deletedIdsRef.current ?? [])
   }
 
   return (
-    <div className={`container ${size}`} ref={scListRef}>
-      <TransitionGroup
-        className="sc-list"
-        style={{
-          ...positionProps,
-        }}
-      >
-        {scList.map(
-          ({
-            face,
-            face_frame,
-            uname,
-            name_color,
-            price,
-            message,
-            message_font_color,
-            background_bottom_color,
-            background_color,
-            id,
-            nodeRef,
-            time,
-            delay,
-          }) => (
-            <CSSTransition classNames="sc" key={id} timeout={500} nodeRef={nodeRef}>
-              <div ref={nodeRef as React.RefObject<HTMLDivElement>}>
-                <div className="sc">
-                  <div
-                    className="top-container"
-                    style={{
-                      backgroundColor: background_color,
-                      borderColor: background_bottom_color,
-                    }}
-                    ref={nodeRef as React.RefObject<HTMLDivElement>}
-                  >
-                    <div className="avatar-container">
-                      <div
-                        className="avatar"
-                        style={{
-                          backgroundImage: `url(${face})`,
-                        }}
-                      />
-                      <div
-                        className="avatar frame"
-                        style={{
-                          backgroundImage: `url(${face_frame})`,
-                        }}
-                      />
+    <div className={`bfs-sc-root ${size}`}>
+      <div className="bfs-sc-overlay" ref={scListRef} style={positionStyle}>
+        <button
+          type="button"
+          className="bfs-sc-drag-handle"
+          aria-label="拖动醒目留言列表"
+          title="拖动醒目留言列表"
+          {...dragHandleProps}
+        >
+          <span aria-hidden="true">⠿</span>
+        </button>
+        <TransitionGroup className="bfs-sc-list">
+          {scList.map(
+            ({
+              face,
+              face_frame,
+              uname,
+              name_color,
+              price,
+              message,
+              message_font_color,
+              background_bottom_color,
+              background_color,
+              id,
+              nodeRef,
+              time,
+              delay,
+            }) => (
+              <CSSTransition
+                classNames="sc"
+                key={id}
+                timeout={500}
+                nodeRef={nodeRef}
+              >
+                <div ref={nodeRef}>
+                  <div className="bfs-sc-card">
+                    <div
+                      className="bfs-sc-header"
+                      style={{
+                        backgroundColor: background_color,
+                        borderColor: background_bottom_color,
+                      }}
+                    >
+                      <div className="bfs-sc-avatar-wrap">
+                        <div
+                          className="bfs-sc-avatar"
+                          style={{
+                            backgroundImage: `url(${face})`,
+                          }}
+                        />
+                        <div
+                          className="bfs-sc-avatar bfs-sc-avatar-frame"
+                          style={{
+                            backgroundImage: `url(${face_frame})`,
+                          }}
+                        />
+                      </div>
+                      <div className="bfs-sc-meta">
+                        <span className="bfs-sc-name" style={{ '--sc-name-color': name_color } as React.CSSProperties}>
+                          {uname}
+                        </span>
+                        <span className="bfs-sc-price">
+                          {price}
+                          元
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        aria-label={`关闭 ${uname} 的醒目留言`}
+                        className="bfs-sc-close"
+                        onClick={e => handleDelete(e, id)}
+                      >
+                        <img src={closeIcon} alt="" />
+                      </button>
                     </div>
-                    <div className="top-right-container">
-                      <span className="name" style={{ '--sc-name-color': name_color } as React.CSSProperties}>
-                        {uname}
-                      </span>
-                      <span className="price">
-                        {price}
-                        元
-                      </span>
+                    <div
+                      className="bfs-sc-content"
+                      style={{
+                        color: message_font_color,
+                        backgroundColor: background_bottom_color,
+                      }}
+                    >
+                      {message}
                     </div>
-                    <img src={closeIcon} alt="关闭" className="close-btn" onClick={e => handleDelete(e, id)} />
                   </div>
-                  <div
-                    className="content"
-                    style={{
-                      color: message_font_color,
-                      backgroundColor: background_bottom_color,
-                    }}
-                  >
-                    {message}
+                  <div className="bfs-sc-progress">
+                    <div
+                      className="bfs-sc-progress-bar"
+                      style={{
+                        backgroundColor: background_bottom_color,
+                        animationDuration: `${time}s`,
+                        animationDelay: `-${delay}s`,
+                      }}
+                    >
+                    </div>
                   </div>
                 </div>
-                <div className="progress-inner">
-                  <div
-                    className="progress-bg"
-                    style={{
-                      backgroundColor: background_bottom_color,
-                      animationDuration: `${time}s`,
-                      animationDelay: `-${delay}s`,
-                    }}
-                  >
-                  </div>
-                </div>
-              </div>
-            </CSSTransition>
-          ),
-        )}
-      </TransitionGroup>
+              </CSSTransition>
+            ),
+          )}
+        </TransitionGroup>
+      </div>
     </div>
   )
 }

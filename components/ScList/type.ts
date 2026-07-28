@@ -1,3 +1,5 @@
+import type { RefObject } from 'react'
+
 export interface ScInfo {
   face: string
   face_frame: string
@@ -10,7 +12,7 @@ export interface ScInfo {
   background_color: string
   id: number
   time: number
-  nodeRef: React.RefObject<HTMLDivElement | unknown>
+  nodeRef: RefObject<HTMLDivElement>
   delay: number
   addedTime: number
 }
