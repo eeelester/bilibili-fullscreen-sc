@@ -36,5 +36,16 @@
   .radio {
     position: absolute;
     right: 12px;
+
+    &:focus-visible {
+      outline: 3px solid rgb(9 105 218 / 35%);
+      outline-offset: 3px;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .option {
+    transition: none;
   }
 }

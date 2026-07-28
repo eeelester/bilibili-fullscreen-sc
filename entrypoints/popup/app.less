@@ -5,19 +5,40 @@ html {
 }
 
 .popup-wrap {
-  width: fit-content;
+  box-sizing: border-box;
+  width: 320px;
   min-width: 250px;
   padding: 16px;
+  color: #18181b;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
 
-  .container {
-    &.max {
-      min-width: 330px;
-    }
+  &.popup-size-max {
+    width: 368px;
+  }
 
-    .sc-list {
-      position: inherit;
+  .bfs-sc-root {
+    .bfs-sc-overlay {
+      position: relative;
+      top: auto !important;
+      left: auto !important;
       overflow: hidden;
     }
+
+    .bfs-sc-drag-handle {
+      display: none;
+    }
+  }
+
+  .settings-group {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
   }
 
   .position-select {
@@ -28,14 +49,15 @@ html {
     background-color: #fff;
     font-size: 14px;
     cursor: pointer;
-    outline: none;
 
     &:hover {
       border-color: #ccc;
     }
 
-    &:focus {
-      border-color: #1890ff;
+    &:focus-visible {
+      border-color: #0969da;
+      outline: 3px solid rgb(9 105 218 / 30%);
+      outline-offset: 2px;
     }
   }
 
@@ -51,5 +73,32 @@ html {
     background-color: #e5e5e5;
     width: 100%;
     margin: 6px 0;
+  }
+
+  .settings-error {
+    margin: 10px 0 0;
+    color: #b42318;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .sr-only {
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    position: absolute;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }

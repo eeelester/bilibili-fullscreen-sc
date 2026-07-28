@@ -1,53 +1,43 @@
-import { useCallback, useLayoutEffect, useState } from 'react'
-import { DEFAULT_SIZE, sizeEnum } from '@/constant'
+import { sizeEnum } from '@/constant'
 import './index.less'
 
 interface RadioGroupProps {
+  disabled?: boolean
   onChange: (size: sizeEnum) => void
+  value: sizeEnum
 }
 
-export default function RadioGroup(props: RadioGroupProps) {
-  const { onChange } = props
-  const [size, setSize] = useState<sizeEnum>(DEFAULT_SIZE)
+const options: Array<{ label: string, value: sizeEnum }> = [
+  { label: '大', value: sizeEnum.max },
+  { label: '中', value: sizeEnum.medium },
+  { label: '小', value: sizeEnum.min },
+]
 
-  const options = [
-    { label: '大', value: sizeEnum.max },
-    { label: '中', value: sizeEnum.medium },
-    { label: '小', value: sizeEnum.min },
-  ]
-
-  const handleChange = useCallback((value: sizeEnum) => {
-    setSize(value)
-    onChange(value)
-  }, [onChange])
-
-  useLayoutEffect(() => {
-    void (async () => {
-      const savedSize: sizeEnum | null | undefined = await storage.getItem('local:UISize')
-      setSize(savedSize && Object.values(sizeEnum).includes(savedSize) ? savedSize : DEFAULT_SIZE)
-    })()
-  }, [])
-
+export default function RadioGroup({ disabled = false, onChange, value: selectedSize }: RadioGroupProps) {
   return (
     <div className="radio-group">
-      {options.map(({ value, label }) => (
-        <label
-          key={value}
-          htmlFor={value}
-          className={`option ${size === value ? 'checked' : ''}`}
-          onClick={() => handleChange(value)}
-        >
-          {label}
-          <input
-            type="radio"
-            value={value}
-            name="status"
-            checked={size === value}
-            onChange={() => { }}
-            className="radio"
-          />
-        </label>
-      ))}
+      {options.map(({ value, label }) => {
+        const id = `sc-size-${value}`
+        return (
+          <label
+            key={value}
+            htmlFor={id}
+            className={`option ${selectedSize === value ? 'checked' : ''}`}
+          >
+            {label}
+            <input
+              id={id}
+              type="radio"
+              value={value}
+              name="sc-size"
+              checked={selectedSize === value}
+              disabled={disabled}
+              onChange={() => onChange(value)}
+              className="radio"
+            />
+          </label>
+        )
+      })}
     </div>
   )
 }
