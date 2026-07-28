@@ -95,20 +95,28 @@ interface WbiKeys {
   sub_key: string
 }
 
+interface WbiOptions {
+  forceRefresh?: boolean
+  signal?: AbortSignal
+}
+
+const WBI_KEY_TTL_MS = 10 * 60 * 1000
+let cachedWbiKeys: { expiresAt: number, value: WbiKeys } | null = null
+
 // 为请求参数进行 wbi 签名
 function encWbi(params: WbiParams, img_key: string, sub_key: string): string {
   const mixin_key = getMixinKey(img_key + sub_key)
   const curr_time = Math.round(Date.now() / 1000)
   const chr_filter = /[!'()*]/g
+  const paramsWithTimestamp = { ...params, wts: curr_time }
 
-  Object.assign(params, { wts: curr_time }) // 添加 wts 字段
   // 按照 key 重排参数
   const query = Object
-    .keys(params)
-    .sort()
-    .map((key) => {
+    .entries(paramsWithTimestamp)
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([key, rawValue]) => {
       // 过滤 value 中的 "!'()*" 字符
-      const value = params[key].toString().replace(chr_filter, '')
+      const value = String(rawValue).replace(chr_filter, '')
       return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
     })
     .join('&')
@@ -119,14 +127,24 @@ function encWbi(params: WbiParams, img_key: string, sub_key: string): string {
 }
 
 // 获取最新的 img_key 和 sub_key
-async function getWbiKeys(): Promise<WbiKeys> {
+async function getWbiKeys(options: WbiOptions = {}): Promise<WbiKeys> {
+  if (!options.forceRefresh && cachedWbiKeys && cachedWbiKeys.expiresAt > Date.now())
+    return cachedWbiKeys.value
+
   const res = await fetch('https://api.bilibili.com/x/web-interface/nav', {
     credentials: 'include',
+    signal: options.signal,
   })
+  if (!res.ok)
+    throw new Error(`WBI key request failed: ${res.status}`)
+
   const data = await res.json() as BilibiliNavResponse
+  if (data.code !== 0 || !data.data?.wbi_img?.img_url || !data.data?.wbi_img?.sub_url)
+    throw new Error(`WBI key response invalid: ${data.code} ${data.message}`)
+
   const { data: { wbi_img: { img_url, sub_url } } } = data
 
-  return {
+  const value = {
     img_key: img_url.slice(
       img_url.lastIndexOf('/') + 1,
       img_url.lastIndexOf('.'),
@@ -136,13 +154,19 @@ async function getWbiKeys(): Promise<WbiKeys> {
       sub_url.lastIndexOf('.'),
     ),
   }
+
+  cachedWbiKeys = {
+    expiresAt: Date.now() + WBI_KEY_TTL_MS,
+    value,
+  }
+  return value
 }
 
-export async function wbi(params: WbiParams): Promise<string> {
-  const web_keys = await getWbiKeys()
+export async function wbi(params: WbiParams, options: WbiOptions = {}): Promise<string> {
+  const web_keys = await getWbiKeys(options)
   const img_key = web_keys.img_key
   const sub_key = web_keys.sub_key
-  const query = encWbi(params, img_key, sub_key)
-  console.log('wbi', query)
-  return query
+  return encWbi(params, img_key, sub_key)
 }
+
+export { encWbi }

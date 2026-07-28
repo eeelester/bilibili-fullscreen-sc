@@ -2,42 +2,33 @@ import type { DanmuDataProps } from '@/utils'
 
 interface BilibiliResponseBasic {
   code: number
-  message: string
-  msg: string
-  ttl: number
+  message?: string
+  msg?: string
+  ttl?: number
 }
 
 export interface RoomInfo extends BilibiliResponseBasic {
-  data: {
-    room_id: number
+  data?: {
+    room_id?: number
   }
 }
 
-type DanmuData = Pick<DanmuDataProps, 'data'>['data']
+type DanmuData = DanmuDataProps['data']
 interface MessageList extends DanmuData {
-  time: number
   start_time: number
   end_time: number
 }
 
 export interface RoomDetailInfo extends BilibiliResponseBasic {
-  data: {
-    super_chat_info: {
-      message_list: MessageList[]
+  data?: {
+    super_chat_info?: {
+      message_list?: MessageList[]
     }
   }
 }
 
 export interface DanmuInfo extends BilibiliResponseBasic {
-  data: {
-    token: string
+  data?: {
+    token?: string
   }
 }
-
-export interface personInfo extends BilibiliResponseBasic {
-  data: {
-    mid: number
-  }
-}
-
-export type Status = 'active' | 'inactive' | 'pending'
