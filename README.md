@@ -36,17 +36,25 @@ pnpm build
 
 ### 开发验证
 
+push/PR CI 会执行以下检查：
+
 ```bash
 pnpm compile
 pnpm lint
 pnpm test -- --runInBand
 pnpm build
-pnpm exec puppeteer browsers install chrome
+```
+
+浏览器回归不会在 push/PR 时自动执行。涉及扩展运行时行为的修改，提交前必须执行：
+
+```bash
+pnpm build
 pnpm test:e2e
 ```
 
-浏览器测试加载 `.output/chrome-mv3`，使用模拟直播接口验证全屏、播放器替换、iframe、SC 到期和设置同步。
-可通过 `PUPPETEER_EXECUTABLE_PATH` 指定本机兼容的 Chrome for Testing。
+浏览器测试加载 `.output/chrome-mv3`，使用模拟直播接口验证全屏、播放器替换、iframe、SC 到期和设置同步。测试会默认定位本机 Chrome，也可通过 `PUPPETEER_EXECUTABLE_PATH` 指定 Chrome 或 Chrome for Testing。
+
+需要在 GitHub Actions 中补跑时，在 Actions 页面手动触发 `Browser regression` 工作流。AI 编码助手每次修改后同样必须跑通浏览器回归，具体要求见 `AGENTS.md`。
 
 ### Chrome 商店发布
 

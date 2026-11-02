@@ -59,8 +59,3 @@ jobs:
 
       - name: Build
         run: pnpm build
-
-      - name: Browser regression
-        run: pnpm test:e2e
-        env:
-          PUPPETEER_EXECUTABLE_PATH: /usr/bin/google-chrome

@@ -1,0 +1,44 @@
+name: Browser regression
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: browser-regression
+  cancel-in-progress: false
+
+jobs:
+  browser-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: package.json
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --prefer-offline
+        env:
+          HUSKY: 0
+          PUPPETEER_SKIP_DOWNLOAD: true
+
+      - name: Build
+        run: pnpm build
+
+      - name: Browser regression
+        run: pnpm test:e2e
+        env:
+          PUPPETEER_EXECUTABLE_PATH: /usr/bin/google-chrome

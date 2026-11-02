@@ -25,13 +25,18 @@ describe('built extension browser regression', () => {
   let browser: Browser
   const pages: Page[] = []
   const errors: string[] = []
+  const recordError = (error: unknown) => errors.push(error instanceof Error ? error.message : String(error))
   beforeAll(async () => {
     browser = await launch({
-      headless: 'new',
+      headless: true,
       executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+      channel: process.env.PUPPETEER_EXECUTABLE_PATH ? undefined : 'chrome',
+      enableExtensions: true,
+      pipe: true,
       defaultViewport: { width: 1280, height: 900 },
-      args: [`--disable-extensions-except=${extensionPath}`, `--load-extension=${extensionPath}`, '--no-sandbox'],
+      args: ['--no-sandbox'],
     })
+    await browser.installExtension(extensionPath)
   })
   afterAll(async () => { await browser?.close() })
   afterEach(async () => {
@@ -43,7 +48,7 @@ describe('built extension browser regression', () => {
     const page = await browser.newPage()
     page.setDefaultTimeout(10_000)
     pages.push(page)
-    page.on('pageerror', error => errors.push(error.message))
+    page.on('pageerror', recordError)
     const cdp = await page.target().createCDPSession()
     await cdp.send('Network.enable')
     await cdp.send('Network.setBlockedURLs', { urls: ['*broadcastlv.chat.bilibili.com*'] })
@@ -214,7 +219,7 @@ describe('built extension browser regression', () => {
     const origin = await iframe!.$eval('link[data-bilibili-fullscreen-sc]', element => new URL((element as HTMLLinkElement).href).origin)
     const popup = await browser.newPage()
     pages.push(popup)
-    popup.on('pageerror', error => errors.push(error.message))
+    popup.on('pageerror', recordError)
     await popup.goto(`${origin}/popup.html`)
     await popup.waitForSelector('.sc')
     expect(await popup.$$eval('.sc', nodes => nodes.length)).toBe(1)
