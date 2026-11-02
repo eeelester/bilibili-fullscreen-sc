@@ -19,7 +19,7 @@
 ```bash
 git clone
 cd bilibili-fullscreen-sc
-pnpm install
+pnpm install --frozen-lockfile
 pnpm build
 ```
 
@@ -30,6 +30,20 @@ pnpm build
 点击左上角“加载已解压的拓展程序”按钮，选择 .output/chrome-\* 文件夹即可（使用页面需要刷新才能生效）。
 
 ---
+
+### 开发验证
+
+```bash
+pnpm compile
+pnpm lint
+pnpm test -- --runInBand
+pnpm build
+pnpm exec puppeteer browsers install chrome
+pnpm test:e2e
+```
+
+浏览器测试加载 `.output/chrome-mv3`，使用模拟直播接口验证全屏、播放器替换、iframe、SC 到期和设置同步。
+可通过 `PUPPETEER_EXECUTABLE_PATH` 指定本机兼容的 Chrome for Testing。
 
 ### 感谢
 

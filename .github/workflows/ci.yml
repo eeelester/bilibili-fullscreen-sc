@@ -59,3 +59,9 @@ jobs:
 
       - name: Build
         run: pnpm build
+
+      - name: Install test browser
+        run: pnpm exec puppeteer browsers install chrome
+
+      - name: Browser regression
+        run: pnpm test:e2e

@@ -30,6 +30,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "jest",
+    "test:e2e": "jest --config jest.browser.config.js --runInBand",
     "prepare": "husky install",
     "release": "release-it"
   },
