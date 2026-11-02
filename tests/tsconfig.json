@@ -5,11 +5,13 @@
     "paths": {
       "@/*": ["./*"],
       "~/*": ["./*"],
-      "wxt/utils/storage": ["./node_modules/wxt/dist/utils/storage.d.ts"]
+      "wxt/utils/storage": ["./node_modules/wxt/dist/utils/storage.d.mts"]
     },
     "target": "ES2020",
     "module": "CommonJS",
+    "verbatimModuleSyntax": false,
     "moduleResolution": "Node",
+    "esModuleInterop": true,
     "jsx": "react-jsx",
     "types": ["node", "jest"],
     "skipLibCheck": true

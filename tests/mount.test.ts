@@ -93,12 +93,12 @@ describe('overlay mounting', () => {
   it('starts data delivery only after the list is subscribed and ignores obsolete ready callbacks', () => {
     videoIn(doc)
     mount()
-    const root = jest.mocked(createRoot).mock.results[0].value
-    const ready = root.render.mock.calls[0][0].props.onReady
+    const root = jest.mocked(createRoot).mock.results[0]!.value
+    const ready = root.render.mock.calls[0]![0].props.onReady
     expect(connectRoom).not.toHaveBeenCalled()
     ready()
     expect(connectRoom).toHaveBeenCalledTimes(1)
-    const disconnect = jest.mocked(connectRoom).mock.results[0].value
+    const disconnect = jest.mocked(connectRoom).mock.results[0]!.value
     unmount()
     ready()
     expect(disconnect).toHaveBeenCalledTimes(1)
@@ -108,14 +108,14 @@ describe('overlay mounting', () => {
   it('does not initialize an obsolete room while the route is changing', () => {
     videoIn(doc)
     mount()
-    const root = jest.mocked(createRoot).mock.results[0].value
-    const ready = root.render.mock.calls[0][0].props.onReady
+    const root = jest.mocked(createRoot).mock.results[0]!.value
+    const ready = root.render.mock.calls[0]![0].props.onReady
     Object.assign(location, { pathname: '/8888' })
     ready()
     expect(connectRoom).not.toHaveBeenCalled()
     mount()
-    const nextRoot = jest.mocked(createRoot).mock.results[1].value
-    nextRoot.render.mock.calls[0][0].props.onReady()
+    const nextRoot = jest.mocked(createRoot).mock.results[1]!.value
+    nextRoot.render.mock.calls[0]![0].props.onReady()
     expect(connectRoom).toHaveBeenCalledWith('8888')
   })
 })

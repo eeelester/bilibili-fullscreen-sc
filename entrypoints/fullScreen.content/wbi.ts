@@ -111,11 +111,11 @@ function encWbi(params: WbiParams, img_key: string, sub_key: string): string {
   params = { ...params, wts: curr_time }
   // 按照 key 重排参数
   const query = Object
-    .keys(params)
-    .sort()
-    .map((key) => {
+    .entries(params)
+    .sort(([left], [right]) => left < right ? -1 : left > right ? 1 : 0)
+    .map(([key, param]) => {
       // 过滤 value 中的 "!'()*" 字符
-      const value = params[key].toString().replace(chr_filter, '')
+      const value = param.toString().replace(chr_filter, '')
       return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
     })
     .join('&')

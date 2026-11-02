@@ -9,10 +9,10 @@ interface ReplacePublicAssetOptions {
 
 export function replacePublicAsset(files: ResolvedPublicFile[], options: ReplacePublicAssetOptions) {
   const index = files.findIndex(file => file.relativeDest === options.filename)
-  if (index === -1)
+  const file = files[index]
+  if (!file)
     return
 
-  const file = files[index]
   const content = 'absoluteSrc' in file
     ? fs.readFileSync(file.absoluteSrc, 'utf-8')
     : file.contents

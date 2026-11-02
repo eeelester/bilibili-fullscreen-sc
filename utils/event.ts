@@ -6,14 +6,15 @@ class EventBus {
   }
 
   subscribe(event: string, callback: Function) {
-    (this.events[event] ? this.events[event] : this.events[event] = []).push(callback)
+    const subscribedEvents = this.events[event] ??= []
+    subscribedEvents.push(callback)
   }
 
   unsubscribe(event: string, callback: Function) {
     const subscribedEvents = this.events[event]
 
     if (subscribedEvents && subscribedEvents.length)
-      this.events[event] = this.events[event].filter(cb => cb !== callback)
+      this.events[event] = subscribedEvents.filter(cb => cb !== callback)
   }
 
   emit(event: string, ...rest) {

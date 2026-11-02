@@ -6,7 +6,7 @@ import { processData } from '@/utils'
 import type { DanmuDataProps } from '@/utils'
 
 class RoomSocket extends KeepLiveWS {
-  connect(reconnect = true) {
+  override connect(reconnect = true) {
     if (!this.closed)
       super.connect(reconnect)
   }

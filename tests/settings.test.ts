@@ -16,7 +16,7 @@ describe('UI settings compatibility', () => {
     expect(normalizePosition(null)).toBe(PositionEnum.BOTTOM_LEFT)
   })
   it('watches both settings and releases both listeners', () => {
-    const cleanups = [jest.fn(), jest.fn()]
+    const cleanups = [jest.fn(), jest.fn()] as const
     jest.mocked(storage.watch).mockReturnValueOnce(cleanups[0]).mockReturnValueOnce(cleanups[1])
     const stop = watchUiSettings(jest.fn(), jest.fn())
     stop()

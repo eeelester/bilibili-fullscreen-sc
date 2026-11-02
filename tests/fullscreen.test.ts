@@ -75,7 +75,7 @@ describe('fullscreen lifecycle', () => {
     stop = observePageFullScreen().stop
     flush()
     currentVideo = { ...currentVideo } as HTMLVideoElement
-    observers[0].callback()
+    observers[0]!.callback()
     flush()
     jest.mocked(unmount).mockClear()
     width = 1280
@@ -114,8 +114,8 @@ describe('fullscreen lifecycle', () => {
     expect(view.requestAnimationFrame).toHaveBeenCalledTimes(1)
     jest.mocked(getVideoDom).mockReturnValue(currentVideo)
     width = 1920
-    observers[0].callback()
-    observers[0].callback()
+    observers[0]!.callback()
+    observers[0]!.callback()
     expect(frames.size).toBe(1)
     flush()
     expect(mount).toHaveBeenCalled()
@@ -132,7 +132,7 @@ describe('fullscreen lifecycle', () => {
     currentVideo = { ...currentVideo, ownerDocument: iframeDocument } as unknown as HTMLVideoElement
     jest.mocked(getVideoDom).mockReturnValue(currentVideo)
     width = 1920
-    observers[1].callback()
+    observers[1]!.callback()
     flush()
     expect(mount).toHaveBeenCalled()
     stop()

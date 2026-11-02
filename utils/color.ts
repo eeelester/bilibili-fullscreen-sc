@@ -31,25 +31,30 @@ function getRelativeLuminance(color: string) {
   if (!rgb)
     return null
 
-  const [red, green, blue] = rgb.map((channel) => {
+  const linearize = (channel: number) => {
     const value = channel / 255
     return value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4
-  })
+  }
+  const [red, green, blue] = rgb
 
-  return 0.2126 * red + 0.7152 * green + 0.0722 * blue
+  return 0.2126 * linearize(red) + 0.7152 * linearize(green) + 0.0722 * linearize(blue)
 }
 
-function parseHexColor(color: string) {
-  const match = color.trim().match(/^#?([a-f\d]{3}|[a-f\d]{6})$/i)
+function parseHexColor(color: string): [number, number, number] | null {
+  const matchedHex = color.trim().match(/^#?([a-f\d]{3}|[a-f\d]{6})$/i)?.[1]
 
-  if (!match)
+  if (!matchedHex)
     return null
 
-  const hex = match[1].length === 3
-    ? match[1].split('').map(char => char + char).join('')
-    : match[1]
+  const hex = matchedHex.length === 3
+    ? matchedHex.split('').map(char => char + char).join('')
+    : matchedHex
 
-  return [0, 2, 4].map(index => Number.parseInt(hex.slice(index, index + 2), 16))
+  return [
+    Number.parseInt(hex.slice(0, 2), 16),
+    Number.parseInt(hex.slice(2, 4), 16),
+    Number.parseInt(hex.slice(4, 6), 16),
+  ]
 }
 
 export { getReadableTextColor }

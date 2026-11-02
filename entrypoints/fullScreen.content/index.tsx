@@ -2,7 +2,7 @@ import observePageFullScreen from './observePageFullScreen'
 import { processPosition, processSize } from '@/utils'
 import { normalizePosition, normalizeSize } from '@/utils/settings'
 
-const fullScreenContentScript = defineContentScript({
+export default defineContentScript({
   matches: ['https://live.bilibili.com/*'],
   main(ctx) {
     const observer = observePageFullScreen()
@@ -22,5 +22,3 @@ const fullScreenContentScript = defineContentScript({
     })
   },
 })
-
-export default fullScreenContentScript

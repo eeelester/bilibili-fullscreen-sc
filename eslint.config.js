@@ -32,6 +32,12 @@ module.exports = antfu(
       "import/no-mutable-exports": "warn"
     },
   },
+  {
+    files: ['entrypoints/**/*.content/index.tsx'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
   ...compat.config({
     env: {
       "webextensions": true

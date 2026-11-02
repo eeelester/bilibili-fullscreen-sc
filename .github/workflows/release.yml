@@ -23,7 +23,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: package.json
           cache: pnpm
 
       - name: git config
@@ -37,6 +37,56 @@ jobs:
           HUSKY: 0
           PUPPETEER_SKIP_DOWNLOAD: true
 
+      - name: Validate Chrome Web Store access
+        run: |
+          node --input-type=module <<'NODE'
+          import { appendFileSync } from 'node:fs'
+
+          for (const name of ['CHROME_EXTENSION_ID', 'CHROME_PUBLISHER_ID', 'CHROME_CLIENT_ID', 'CHROME_CLIENT_SECRET', 'CHROME_REFRESH_TOKEN']) {
+            if (!process.env[name]?.trim())
+              throw new Error(`Missing required configuration: ${name}`)
+          }
+
+          const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+              grant_type: 'refresh_token',
+              client_id: process.env.CHROME_CLIENT_ID,
+              client_secret: process.env.CHROME_CLIENT_SECRET,
+              refresh_token: process.env.CHROME_REFRESH_TOKEN,
+            }),
+            signal: AbortSignal.timeout(15_000),
+          })
+          if (!tokenResponse.ok)
+            throw new Error(`Chrome Web Store authentication failed (HTTP ${tokenResponse.status})`)
+
+          const tokenData = await tokenResponse.json().catch(() => {
+            throw new Error('Invalid Chrome Web Store authentication response')
+          })
+          const accessToken = tokenData?.access_token
+          if (typeof accessToken !== 'string' || !accessToken || /\s/.test(accessToken))
+            throw new Error('Missing or invalid Chrome Web Store access token')
+          console.log(`::add-mask::${accessToken}`)
+
+          const publisherId = encodeURIComponent(process.env.CHROME_PUBLISHER_ID)
+          const extensionId = encodeURIComponent(process.env.CHROME_EXTENSION_ID)
+          const statusResponse = await fetch(`https://chromewebstore.googleapis.com/v2/publishers/${publisherId}/items/${extensionId}:fetchStatus`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+            signal: AbortSignal.timeout(15_000),
+          })
+          if (!statusResponse.ok)
+            throw new Error(`Unable to access configured Chrome Web Store item (HTTP ${statusResponse.status})`)
+
+          appendFileSync(process.env.GITHUB_ENV, `CHROME_SERVICE_ACCOUNT_ACCESS_TOKEN=${accessToken}\n`)
+          NODE
+        env:
+          CHROME_EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
+          CHROME_PUBLISHER_ID: ${{ vars.CHROME_PUBLISHER_ID || secrets.CHROME_PUBLISHER_ID }}
+          CHROME_CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
+          CHROME_CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
+          CHROME_REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
+
       - name: release
         run: pnpm release -i=${{ github.event.inputs.version }}
         env:
@@ -48,7 +98,6 @@ jobs:
             --chrome-zip .output/*-chrome.zip
 
         env:
+          CHROME_API_VERSION: v2
           CHROME_EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
-          CHROME_CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
-          CHROME_CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
-          CHROME_REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
+          CHROME_PUBLISHER_ID: ${{ vars.CHROME_PUBLISHER_ID || secrets.CHROME_PUBLISHER_ID }}

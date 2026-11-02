@@ -16,9 +16,12 @@
 
 ### 本地安装
 
+开发环境使用 [Volta](https://volta.sh/) 管理 Node.js 和 pnpm，版本固定在 `package.json` 的 `volta` 字段中。使用 Volta 管理 pnpm 时需[启用原生支持](https://docs.volta.sh/advanced/pnpm)。CI 和发布流程使用同一 Node.js 版本。
+
 ```bash
 git clone
 cd bilibili-fullscreen-sc
+export VOLTA_FEATURE_PNPM=1
 pnpm install --frozen-lockfile
 pnpm build
 ```
@@ -44,6 +47,12 @@ pnpm test:e2e
 
 浏览器测试加载 `.output/chrome-mv3`，使用模拟直播接口验证全屏、播放器替换、iframe、SC 到期和设置同步。
 可通过 `PUPPETEER_EXECUTABLE_PATH` 指定本机兼容的 Chrome for Testing。
+
+### Chrome 商店发布
+
+发布流程使用 Chrome Web Store API V2。仓库需配置 `CHROME_EXTENSION_ID`、`CHROME_CLIENT_ID`、`CHROME_CLIENT_SECRET`、`CHROME_REFRESH_TOKEN` secrets，以及 `CHROME_PUBLISHER_ID` 仓库变量（也支持同名 secret）。Publisher ID 可在 Chrome 商店开发者后台查看。
+
+工作流会换取短期访问令牌并验证扩展访问权限，再创建版本和提交商店审核。
 
 ### 感谢
 
