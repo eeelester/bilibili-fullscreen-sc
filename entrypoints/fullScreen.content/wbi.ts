@@ -1,4 +1,5 @@
 import md5 from 'md5'
+import { fetchJson } from './api'
 
 const mixinKeyEncTab: number[] = [
   46,
@@ -95,13 +96,19 @@ interface WbiKeys {
   sub_key: string
 }
 
+let cachedKeys: { keys: WbiKeys, expiresAt: number } | undefined
+
+export function clearWbiKeys() {
+  cachedKeys = undefined
+}
+
 // 为请求参数进行 wbi 签名
 function encWbi(params: WbiParams, img_key: string, sub_key: string): string {
   const mixin_key = getMixinKey(img_key + sub_key)
   const curr_time = Math.round(Date.now() / 1000)
   const chr_filter = /[!'()*]/g
 
-  Object.assign(params, { wts: curr_time }) // 添加 wts 字段
+  params = { ...params, wts: curr_time }
   // 按照 key 重排参数
   const query = Object
     .keys(params)
@@ -119,14 +126,19 @@ function encWbi(params: WbiParams, img_key: string, sub_key: string): string {
 }
 
 // 获取最新的 img_key 和 sub_key
-async function getWbiKeys(): Promise<WbiKeys> {
-  const res = await fetch('https://api.bilibili.com/x/web-interface/nav', {
+async function getWbiKeys(signal?: AbortSignal): Promise<WbiKeys> {
+  if (cachedKeys && cachedKeys.expiresAt > Date.now())
+    return cachedKeys.keys
+  const data = await fetchJson<BilibiliNavResponse>('https://api.bilibili.com/x/web-interface/nav', {
     credentials: 'include',
-  })
-  const data = await res.json() as BilibiliNavResponse
-  const { data: { wbi_img: { img_url, sub_url } } } = data
+    signal,
+  }, [-101])
+  const img_url = data.data?.wbi_img?.img_url
+  const sub_url = data.data?.wbi_img?.sub_url
+  if (typeof img_url !== 'string' || typeof sub_url !== 'string')
+    throw new Error('Missing WBI keys')
 
-  return {
+  const keys = {
     img_key: img_url.slice(
       img_url.lastIndexOf('/') + 1,
       img_url.lastIndexOf('.'),
@@ -136,13 +148,17 @@ async function getWbiKeys(): Promise<WbiKeys> {
       sub_url.lastIndexOf('.'),
     ),
   }
+  if (!keys.img_key || !keys.sub_key)
+    throw new Error('Invalid WBI keys')
+  if (!signal?.aborted)
+    cachedKeys = { keys, expiresAt: Date.now() + 5 * 60_000 }
+  return keys
 }
 
-export async function wbi(params: WbiParams): Promise<string> {
-  const web_keys = await getWbiKeys()
+export async function wbi(params: WbiParams, signal?: AbortSignal): Promise<string> {
+  const web_keys = await getWbiKeys(signal)
   const img_key = web_keys.img_key
   const sub_key = web_keys.sub_key
   const query = encWbi(params, img_key, sub_key)
-  console.log('wbi', query)
   return query
 }

@@ -1,67 +1,47 @@
-import { createRef, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { createRef, useCallback, useEffect, useRef, useState } from 'react'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
-import { useMove, useRAF } from './hook'
-import type { SCListProps, ScInfo } from './type'
+import { useMove, useScExpiration } from './hook'
+import type { SCListProps, ScInfo, ScMessage } from './type'
 import { eventBus } from '@/utils/event'
-import { DEFAULT_SIZE, POSITION_EVENT, PositionEnum, SIZE_EVENT, WS_SC_EVENT, sizeEnum } from '@/constant'
+import { WS_SC_EVENT } from '@/constant'
+import { readDeletedScIds, rememberDeletedSc } from '@/utils/deletedSc'
+import { useUiSettings } from '@/components/useUiSettings'
 import closeIcon from '~/assets/close.svg'
 
 import './index.less'
 
 function SCList(props: SCListProps) {
-  const { scDocument = document } = props
+  const { scDocument = document, onReady, uiSettings, preview = false } = props
   const [scList, setScList] = useState<ScInfo[]>([])
-  const [size, setSize] = useState<sizeEnum>(DEFAULT_SIZE)
-  const [position, setPosition] = useState<PositionEnum>(PositionEnum.BOTTOM_LEFT)
+  const savedSettings = useUiSettings(!uiSettings)
+  const { size, position } = uiSettings || savedSettings
   const scListRef = useRef<HTMLDivElement>(null)
-  const positionProps = useMove(scListRef, scDocument, position)
-  useRAF(setScList)
+  const positionProps = useMove(scListRef, scDocument, position, !preview)
+  useScExpiration(scList, setScList, scDocument)
 
-  const Listener = useCallback((scInfo: ScInfo) => {
-    const existDeleteIdList: unknown = JSON.parse(sessionStorage.getItem('deleteId') ?? 'null')
-    if (Array.isArray(existDeleteIdList) && existDeleteIdList.includes(scInfo.id)) {
-      console.log(`该id已被删除`)
+  const Listener = useCallback((scInfo: ScMessage) => {
+    if (readDeletedScIds().has(scInfo.id))
       return
-    }
-    setScList(prev => prev.concat({ ...scInfo, nodeRef: createRef(), addedTime: Date.now() }))
-  }, [])
-
-  useLayoutEffect(() => {
-    void (async () => {
-      try {
-        const savedSize = await storage.getItem('local:UISize')
-        if (savedSize && Object.values(sizeEnum).includes(savedSize as sizeEnum))
-          setSize(savedSize as sizeEnum)
-
-        // 获取保存的位置设置
-        const savedPosition = await storage.getItem('local:UIPosition')
-        if (savedPosition && Object.values(PositionEnum).includes(savedPosition as PositionEnum))
-          setPosition(savedPosition as PositionEnum)
-      }
-      catch (error) {
-        console.error('获取UI设置失败:', error)
-      }
-    })()
+    setScList(prev => prev.some(item => item.id === scInfo.id)
+      ? prev
+      : prev.concat({ ...scInfo, nodeRef: createRef<HTMLDivElement>(), addedTime: Date.now() }))
   }, [])
 
   useEffect(() => {
     eventBus.subscribe(WS_SC_EVENT, Listener)
-    eventBus.subscribe(SIZE_EVENT, setSize)
-    // 订阅位置变更事件
-    eventBus.subscribe(POSITION_EVENT, setPosition)
+    onReady?.()
 
     return () => {
       eventBus.unsubscribe(WS_SC_EVENT, Listener)
-      eventBus.unsubscribe(SIZE_EVENT, setSize)
-      eventBus.unsubscribe(POSITION_EVENT, setPosition)
     }
-  }, [Listener, setSize])
+  }, [Listener, onReady])
 
   const handleDelete = (e: React.MouseEvent<HTMLImageElement, MouseEvent>, id: number) => {
     e.stopPropagation()
     setScList(prev => prev.filter(item => item.id !== id))
-    const existDeleteIdList: unknown = JSON.parse(sessionStorage.getItem('deleteId') ?? 'null')
-    sessionStorage.setItem('deleteId', JSON.stringify(Array.isArray(existDeleteIdList) ? existDeleteIdList.concat([id]) : [id]))
+    const item = scList.find(item => item.id === id)
+    if (item)
+      rememberDeletedSc(id, item.addedTime + (item.time - item.delay) * 1000)
   }
 
   return (
@@ -89,7 +69,7 @@ function SCList(props: SCListProps) {
             delay,
           }) => (
             <CSSTransition classNames="sc" key={id} timeout={500} nodeRef={nodeRef}>
-              <div ref={nodeRef as React.RefObject<HTMLDivElement>}>
+              <div ref={nodeRef}>
                 <div className="sc">
                   <div
                     className="top-container"
@@ -97,7 +77,6 @@ function SCList(props: SCListProps) {
                       backgroundColor: background_color,
                       borderColor: background_bottom_color,
                     }}
-                    ref={nodeRef as React.RefObject<HTMLDivElement>}
                   >
                     <div className="avatar-container">
                       <div

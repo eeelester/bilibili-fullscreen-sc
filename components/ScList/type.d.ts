@@ -1,4 +1,7 @@
-export interface ScInfo {
+import type { RefObject } from 'react'
+import type { UiSettings } from '@/utils/settings'
+
+export interface ScMessage {
   face: string
   face_frame: string
   uname: string
@@ -10,11 +13,17 @@ export interface ScInfo {
   background_color: string
   id: number
   time: number
-  nodeRef: React.RefObject<HTMLDivElement | unknown>
   delay: number
+}
+
+export interface ScInfo extends ScMessage {
+  nodeRef: RefObject<HTMLDivElement>
   addedTime: number
 }
 
 export interface SCListProps {
   scDocument?: Document
+  onReady?: () => void
+  uiSettings?: UiSettings
+  preview?: boolean
 }

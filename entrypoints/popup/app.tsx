@@ -1,15 +1,18 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import RadioGroup from '@/components/RadioGroup'
 import SCList from '@/components/ScList'
 import { processData, processPosition, processSize } from '@/utils'
 import { PositionEnum } from '@/constant'
+import { useUiSettings } from '@/components/useUiSettings'
+import { saveUiPosition, saveUiSize } from '@/utils/settings'
 
 import { testData } from '@/dev/testData'
 import './app.less'
 import type { sizeEnum } from '@/constant'
 
 function App() {
-  const [position, setPosition] = useState<PositionEnum>(PositionEnum.BOTTOM_LEFT)
+  const settings = useUiSettings()
+  const { position } = settings
 
   useEffect(() => {
     processData({
@@ -24,30 +27,17 @@ function App() {
         },
       },
     })
-
-    // 获取保存的位置设置
-    void (async () => {
-      try {
-        const savedPosition = await storage.getItem('local:UIPosition')
-        if (savedPosition && Object.values(PositionEnum).includes(savedPosition as PositionEnum))
-          setPosition(savedPosition as PositionEnum)
-      }
-      catch (error) {
-        console.error('获取位置设置失败:', error)
-      }
-    })()
   }, [])
 
   const handleSizeChange = (v: sizeEnum) => {
     processSize(v)
-    void onResize(v)
+    void onResize(v).catch(error => console.error('保存UI大小失败:', error))
   }
 
   const handlePositionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newPosition = e.target.value as PositionEnum
-    setPosition(newPosition)
     processPosition(newPosition)
-    void onChangePosition(newPosition)
+    void onChangePosition(newPosition).catch(error => console.error('保存位置失败:', error))
   }
 
   return (
@@ -65,36 +55,34 @@ function App() {
       </select>
       <div className="divider"></div>
       <legend className="title">UI大小</legend>
-      <RadioGroup onChange={handleSizeChange} />
+      <RadioGroup value={settings.size} onChange={handleSizeChange} />
       <div className="divider"></div>
       <legend className="title">示例：</legend>
-      <SCList scDocument={document} />
+      <SCList scDocument={document} uiSettings={settings} preview />
     </div>
   )
 }
 
 async function onResize(size: sizeEnum) {
   // 存着，不然下次点击popup就没有了
-  await storage.setItem<sizeEnum>('local:UISize', size)
+  await saveUiSize(size)
   await sendMessageToActiveTab({ size })
 }
 
 async function onChangePosition(position: PositionEnum) {
   // 保存位置设置
-  await storage.setItem<PositionEnum>('local:UIPosition', position)
+  await saveUiPosition(position)
   await sendMessageToActiveTab({ position })
 }
 
 async function sendMessageToActiveTab(message: { size?: sizeEnum, position?: PositionEnum }) {
-  const [tab] = await browser.tabs.query({
-    active: true,
-    currentWindow: true,
-  })
-
-  if (!tab?.id)
-    return
-
   try {
+    const [tab] = await browser.tabs.query({
+      active: true,
+      currentWindow: true,
+    })
+    if (tab?.id === undefined)
+      return
     await browser.tabs.sendMessage(tab.id, message)
   }
   catch (error) {

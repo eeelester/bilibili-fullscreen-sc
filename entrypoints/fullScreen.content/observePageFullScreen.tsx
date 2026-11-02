@@ -1,88 +1,101 @@
 import { getVideoDom, mount, unmount } from './utils'
-import { ALREADY_HAVE_IT } from './const'
 
-let resizeObserver: ResizeObserver | null
+export default function observePageFullScreen() {
+  let stopped = false
+  let frame: number | undefined
+  let video: HTMLVideoElement | undefined
+  let videoDocument: Document | undefined
+  const iframeObservers = new Map<Document, MutationObserver>()
+  const iframeListeners = new Map<HTMLIFrameElement, () => void>()
 
-export default function ObservePageFullScreen() {
-  // video出现的时机
-  function loop() {
-    const video = getVideoDom()
-    if (video) {
-      listenVideoSizeChange(video)
-      // 如果切换清晰度，会销毁原本的video，然后新增video，所以原本在之前的video监听宽度已经没用了，需要重新监听
-      monitorVideo(video)
-    }
-    else {
-      window.requestAnimationFrame(loop)
-    }
+  function schedule() {
+    if (!stopped && frame === undefined)
+      frame = window.requestAnimationFrame(reconcile)
   }
 
-  window.requestAnimationFrame(loop)
-}
+  const resizeObserver = new ResizeObserver(schedule)
+  const documentObserver = new MutationObserver(schedule)
 
-function listenVideoSizeChange(video: HTMLVideoElement) {
-  let lastTimePageFullScreen = false
-  resizeObserver = new ResizeObserver((entries) => {
-    for (const entry of entries) {
-      if (entry.contentRect) {
-        const videoWidth = entry.contentRect?.width
-        if (Math.abs(videoWidth - window.innerWidth) < 2) {
-          // 虽然宽度相同，但是有可能窗口resize也会进来，所以为了防止重复mount
-          if (!lastTimePageFullScreen) {
-            // 全屏模式下跳另一种全屏，要做校验是否已经处于全屏模式
-            if (mount('------进入了网页全屏模式------') !== ALREADY_HAVE_IT)
-              lastTimePageFullScreen = true
+  function reconcile() {
+    frame = undefined
+    if (stopped)
+      return
+    const nextVideo = getVideoDom()
+    if (nextVideo !== video) {
+      resizeObserver.disconnect()
+      video = nextVideo
+      videoDocument = video?.ownerDocument
+      if (video)
+        resizeObserver.observe(video)
+    }
+    const iframes = new Set(document.querySelectorAll('iframe'))
+    const iframeDocuments = new Set<Document>()
+    for (const [iframe, listener] of iframeListeners) {
+      if (!iframes.has(iframe)) {
+        iframe.removeEventListener('load', listener)
+        iframeListeners.delete(iframe)
+      }
+    }
+    for (const iframe of iframes) {
+      if (iframe.allowFullscreen && !iframeListeners.has(iframe)) {
+        iframe.addEventListener('load', schedule)
+        iframeListeners.set(iframe, schedule)
+      }
+      if (iframe.allowFullscreen) {
+        try {
+          const iframeDocument = iframe.contentDocument
+          if (iframeDocument) {
+            iframeDocuments.add(iframeDocument)
+            if (!iframeObservers.has(iframeDocument)) {
+              const observer = new MutationObserver(schedule)
+              observer.observe(iframeDocument, { childList: true, subtree: true })
+              iframeDocument.addEventListener('fullscreenchange', schedule)
+              iframeObservers.set(iframeDocument, observer)
+            }
           }
         }
-        else if (lastTimePageFullScreen && videoWidth && Math.abs(videoWidth - window.innerWidth) >= 2) {
-          unmount('------退出了网页全屏模式------')
-          lastTimePageFullScreen = false
+        catch {
+          // 跨域 iframe 不提供可访问的播放器 DOM。
         }
       }
     }
-  })
-
-  resizeObserver.observe(video)
-}
-
-function monitorVideo(video: HTMLVideoElement) {
-  const videoParent = video.parentNode
-
-  // 当观察到变动时执行的回调函数
-  const callback = function (mutationsList: MutationRecord[]) {
-    for (const mutation of mutationsList) {
-      if (mutation.type === 'childList') {
-        for (const i of mutation.addedNodes) {
-          // 遍历新增的节点，取出新增的video节点
-          const addVideoDom = getAddVideoDom(i)
-          if (addVideoDom) {
-            resizeObserver?.disconnect()
-            listenVideoSizeChange(addVideoDom)
-          }
-        }
+    for (const [iframeDocument, observer] of iframeObservers) {
+      if (!iframeDocuments.has(iframeDocument)) {
+        observer.disconnect()
+        iframeDocument.removeEventListener('fullscreenchange', schedule)
+        iframeObservers.delete(iframeDocument)
       }
     }
+    const nativeFullscreen = Boolean(document.fullscreenElement || videoDocument?.fullscreenElement)
+    const width = video?.clientWidth || video?.getBoundingClientRect().width || 0
+    const webFullscreen = width > 0 && Math.abs(width - window.innerWidth) < 2
+    if (video?.isConnected && (nativeFullscreen || webFullscreen))
+      mount()
+    else
+      unmount()
   }
 
-  // 创建一个观察器实例并传入回调函数
-  const observer = new MutationObserver(callback)
-
-  // 以上述配置开始观察目标节点
-  observer.observe(videoParent as Node, {
-    attributes: false,
-    childList: true,
-    subtree: true,
-  })
-}
-
-function getAddVideoDom(dom: Node | ChildNode): false | HTMLVideoElement {
-  if (dom.nodeName === 'VIDEO')
-    return dom as HTMLVideoElement
-
-  for (const i of dom.childNodes) {
-    const iframeDom = getAddVideoDom(i)
-    if (iframeDom)
-      return iframeDom
+  documentObserver.observe(document, { childList: true, subtree: true, attributes: true, attributeFilter: ['allowfullscreen'] })
+  document.addEventListener('fullscreenchange', schedule)
+  window.addEventListener('resize', schedule)
+  schedule()
+  function stop() {
+    stopped = true
+    if (frame !== undefined)
+      window.cancelAnimationFrame(frame)
+    resizeObserver.disconnect()
+    documentObserver.disconnect()
+    for (const [iframeDocument, observer] of iframeObservers) {
+      observer.disconnect()
+      iframeDocument.removeEventListener('fullscreenchange', schedule)
+    }
+    iframeObservers.clear()
+    document.removeEventListener('fullscreenchange', schedule)
+    window.removeEventListener('resize', schedule)
+    for (const [iframe, listener] of iframeListeners)
+      iframe.removeEventListener('load', listener)
+    iframeListeners.clear()
+    unmount()
   }
-  return false
+  return { refresh: schedule, stop }
 }

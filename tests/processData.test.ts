@@ -4,6 +4,14 @@ import { eventBus } from '@/utils/event'
 import { testData } from './testData'
 
 describe('processData', () => {
+  it('ignores malformed and expired messages without throwing', () => {
+    const listener = jest.fn()
+    eventBus.subscribe(WS_SC_EVENT, listener)
+    for (const message of [null, {}, { data: null }, { data: {} }, { data: { ...testData.data, time: -1 } }, { data: { ...testData.data, delay: testData.data.time } }])
+      expect(() => processData(message)).not.toThrow()
+    expect(listener).not.toHaveBeenCalled()
+    eventBus.unsubscribe(WS_SC_EVENT, listener)
+  })
   it('emits normalized super chat data', () => {
     const listener = jest.fn()
     eventBus.subscribe(WS_SC_EVENT, listener)
