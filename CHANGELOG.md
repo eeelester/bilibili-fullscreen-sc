@@ -1,5 +1,29 @@
 
 
+## [0.11.0](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.10.0...0.11.0) (2026-11-02)
+
+
+### ♻ Code Refactoring | 代码重构
+
+* **sc:** 优化全屏挂载、直播连接和界面设置同步 ([6e0541b](https://github.com/eeelester/bilibili-fullscreen-sc/commit/6e0541b96ecdb0043978b83aa9f245047447b195))
+
+
+### ✅ Tests | 测试
+
+* **e2e:** 补充浏览器回归测试并接入持续集成 ([35d58ab](https://github.com/eeelester/bilibili-fullscreen-sc/commit/35d58ab38029c117e343259552726564e1387014))
+
+
+### 👷‍ Build System | 构建
+
+* **wxt:** 升级构建框架并通过 Volta 固定工具链版本 ([3a0f34a](https://github.com/eeelester/bilibili-fullscreen-sc/commit/3a0f34ad2c07dbf6364ddd45772901da4767c7d7))
+
+
+### 🔧 Continuous Integration | CI 配置
+
+* attach extension zip to GitHub releases ([7c5f6d5](https://github.com/eeelester/bilibili-fullscreen-sc/commit/7c5f6d5319869871f011b106999ea2d9ef1896d3))
+* **e2e:** 改为手动运行浏览器回归 ([bb5806d](https://github.com/eeelester/bilibili-fullscreen-sc/commit/bb5806d6224a06aac22bdbb9b578f0a54fc5dfa8))
+* 使用预装 Chrome 运行浏览器回归 ([ea0eb75](https://github.com/eeelester/bilibili-fullscreen-sc/commit/ea0eb758c52aa848b04839cd919ff121c7fe8a73))
+
 ## [0.10.0](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.9.7...0.10.0) (2026-07-14)
 
 
