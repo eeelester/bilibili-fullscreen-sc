@@ -60,7 +60,7 @@ pnpm test:e2e
 
 发布流程使用 Chrome Web Store API V2。仓库需配置 `CHROME_EXTENSION_ID`、`CHROME_CLIENT_ID`、`CHROME_CLIENT_SECRET`、`CHROME_REFRESH_TOKEN` secrets，以及 `CHROME_PUBLISHER_ID` 仓库变量（也支持同名 secret）。Publisher ID 可在 Chrome 商店开发者后台查看。
 
-工作流会换取短期访问令牌并验证扩展访问权限，再创建版本和提交商店审核。
+工作流会换取短期访问令牌并验证扩展访问权限，再创建版本和提交商店审核。OAuth 凭据获取步骤见 [DEV.md](DEV.md)。
 
 ### 感谢
 
