@@ -1,5 +1,17 @@
 
 
+## [0.11.1](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.11.0...0.11.1) (2026-11-03)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* **permissions:** 移除未使用的标签页权限并整理文档 ([3d97173](https://github.com/eeelester/bilibili-fullscreen-sc/commit/3d97173e2ee28c50d04c5c1165202ed1a5f251aa))
+
+
+### 📝 Documentation | 文档
+
+* 补充 Chrome 商店 OAuth 配置说明 ([04760b9](https://github.com/eeelester/bilibili-fullscreen-sc/commit/04760b93aa9b2f6c696ce0ed304587653e7ae471))
+
 ## [0.11.0](https://github.com/eeelester/bilibili-fullscreen-sc/compare/0.10.0...0.11.0) (2026-11-02)
 
 
