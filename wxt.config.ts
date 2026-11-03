@@ -5,7 +5,7 @@ export default defineConfig({
   modules: ['@wxt-dev/module-react'],
   manifest: {
     name: 'B站助手，全屏显示SC，评论显示IP属地',
-    permissions: ['storage', 'tabs'],
+    permissions: ['storage'],
     host_permissions: ['*://*.bilibili.com/*'],
     content_scripts: [
       {
